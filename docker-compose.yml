@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-earlydx}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-locally}
+      POSTGRES_DB: ${POSTGRES_DB:-earlydx}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - earlydx_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-earlydx}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  earlydx_pgdata:

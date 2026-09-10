@@ -1,0 +1,9 @@
+# EarlyDX — ML + scripts (Python 3.11)
+numpy==1.26.4
+pandas==2.2.2
+scikit-learn==1.4.2
+scipy==1.13.1
+joblib==1.4.2
+matplotlib==3.8.4
+shap==0.45.1
+xgboost==2.0.3

@@ -1,0 +1,73 @@
+{
+  "disease": "diabetes",
+  "model_id": "diabetes-v1",
+  "target": "Outcome",
+  "required_features": [
+    "Pregnancies",
+    "Glucose",
+    "BloodPressure",
+    "SkinThickness",
+    "Insulin",
+    "BMI",
+    "DiabetesPedigreeFunction",
+    "Age"
+  ],
+  "feature_details": {
+    "Pregnancies": {
+      "type": "number",
+      "unit": "count",
+      "min": 0,
+      "max": 25,
+      "required": true
+    },
+    "Glucose": {
+      "type": "number",
+      "unit": "mg/dL (2-hour OGTT plasma glucose)",
+      "min": 30,
+      "max": 400,
+      "required": true
+    },
+    "BloodPressure": {
+      "type": "number",
+      "unit": "mm Hg (diastolic)",
+      "min": 20,
+      "max": 200,
+      "required": true
+    },
+    "SkinThickness": {
+      "type": "number",
+      "unit": "mm (triceps skinfold)",
+      "min": 5,
+      "max": 110,
+      "required": true
+    },
+    "Insulin": {
+      "type": "number",
+      "unit": "mu U/mL (2-hour serum insulin)",
+      "min": 5,
+      "max": 900,
+      "required": true
+    },
+    "BMI": {
+      "type": "number",
+      "unit": "kg/m^2",
+      "min": 10,
+      "max": 80,
+      "required": true
+    },
+    "DiabetesPedigreeFunction": {
+      "type": "number",
+      "unit": "unitless pedigree score",
+      "min": 0.0,
+      "max": 3.0,
+      "required": true
+    },
+    "Age": {
+      "type": "number",
+      "unit": "years",
+      "min": 18,
+      "max": 120,
+      "required": true
+    }
+  }
+}

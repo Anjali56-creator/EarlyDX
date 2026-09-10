@@ -1,0 +1,36 @@
+{
+  "_meta": {
+    "description": "EarlyDX model registry."
+  },
+  "models": {
+    "diabetes-v1": {
+      "model_id": "diabetes-v1",
+      "disease": "diabetes",
+      "version": "v1",
+      "algorithm": "RandomForestClassifier",
+      "dataset": "pima-indians-diabetes",
+      "training_date": "2026-09-10",
+      "features": [
+        "Pregnancies",
+        "Glucose",
+        "BloodPressure",
+        "SkinThickness",
+        "Insulin",
+        "BMI",
+        "DiabetesPedigreeFunction",
+        "Age"
+      ],
+      "metrics": {
+        "test_roc_auc": 0.8255,
+        "test_pr_auc": 0.7229,
+        "test_recall_sensitivity": 0.5926,
+        "test_specificity": 0.83,
+        "test_accuracy": 0.7468,
+        "cv_roc_auc_mean": 0.832
+      },
+      "calibration": "isotonic",
+      "status": "active",
+      "artifact_path": "models/diabetes-v1.joblib"
+    }
+  }
+}

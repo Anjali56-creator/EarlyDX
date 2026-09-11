@@ -6,6 +6,7 @@ import type {
   ModelEntry,
   PredictAllResponse,
   PredictionResponse,
+  ValidationSamples,
 } from "../types";
 
 const BASE = import.meta.env.VITE_API_BASE ?? "/api";
@@ -38,14 +39,15 @@ export const api = {
   models: () => req<{ count: number; models: ModelEntry[] }>("/models"),
   datasets: () => req<{ count: number; datasets: DatasetEntry[]; meta: Record<string, unknown> }>("/datasets"),
   schema: (disease: string) => req<FeatureSchema>(`/schema/${disease}`),
-  predict: (disease: string, features: Record<string, number>) =>
+  predict: (disease: string, features: Record<string, number | string>) =>
     req<PredictionResponse>(`/predict/${disease}`, {
       method: "POST",
       body: JSON.stringify(features),
     }),
-  predictAll: (features: Record<string, number>) =>
+  predictAll: (features: Record<string, number | string>) =>
     req<PredictAllResponse>("/predict/all", {
       method: "POST",
       body: JSON.stringify({ features }),
     }),
+  validationSamples: (disease: string) => req<ValidationSamples>(`/validation/${disease}`),
 };

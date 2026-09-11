@@ -1,7 +1,8 @@
 {
   "disease": "diabetes",
   "model_id": "diabetes-v1",
-  "target": "Outcome",
+  "target": "target",
+  "positive_label": "tested positive for diabetes (Outcome = 1)",
   "required_features": [
     "Pregnancies",
     "Glucose",
@@ -16,58 +17,63 @@
     "Pregnancies": {
       "type": "number",
       "unit": "count",
+      "required": true,
       "min": 0,
-      "max": 25,
-      "required": true
+      "max": 25
     },
     "Glucose": {
       "type": "number",
       "unit": "mg/dL (2-hour OGTT plasma glucose)",
+      "required": true,
       "min": 30,
       "max": 400,
-      "required": true
+      "zero_is_missing": true
     },
     "BloodPressure": {
       "type": "number",
       "unit": "mm Hg (diastolic)",
+      "required": true,
       "min": 20,
       "max": 200,
-      "required": true
+      "zero_is_missing": true
     },
     "SkinThickness": {
       "type": "number",
       "unit": "mm (triceps skinfold)",
+      "required": true,
       "min": 5,
       "max": 110,
-      "required": true
+      "zero_is_missing": true
     },
     "Insulin": {
       "type": "number",
       "unit": "mu U/mL (2-hour serum insulin)",
+      "required": true,
       "min": 5,
       "max": 900,
-      "required": true
+      "zero_is_missing": true
     },
     "BMI": {
       "type": "number",
       "unit": "kg/m^2",
+      "required": true,
       "min": 10,
       "max": 80,
-      "required": true
+      "zero_is_missing": true
     },
     "DiabetesPedigreeFunction": {
       "type": "number",
       "unit": "unitless pedigree score",
+      "required": true,
       "min": 0.0,
-      "max": 3.0,
-      "required": true
+      "max": 3.0
     },
     "Age": {
       "type": "number",
       "unit": "years",
+      "required": true,
       "min": 18,
-      "max": 120,
-      "required": true
+      "max": 120
     }
   }
 }

@@ -1,0 +1,505 @@
+{
+  "model_id": "kidney_disease-v1",
+  "disease": "kidney_disease",
+  "display_name": "Chronic Kidney Disease",
+  "version": "v1",
+  "algorithm": "LogisticRegression",
+  "baseline_algorithm": "LogisticRegression",
+  "selection_rule": "prefer LogisticRegression; a candidate is chosen only if its validation ROC-AUC exceeds the baseline by >= 0.01",
+  "random_state": 42,
+  "training_date": "2026-09-10",
+  "dataset": {
+    "name": "UCI Chronic Kidney Disease",
+    "registry_key": "kidney_disease"
+  },
+  "split": {
+    "scheme": "stratified",
+    "sizes": {
+      "train": 240,
+      "val": 80,
+      "test": 80
+    }
+  },
+  "target_positive_rate": 0.625,
+  "validation_metrics_by_candidate": {
+    "LogisticRegression": {
+      "threshold": 0.5,
+      "n": 80,
+      "class_distribution": {
+        "0": 30,
+        "1": 50
+      },
+      "accuracy": 0.975,
+      "precision": 1.0,
+      "recall_sensitivity": 0.96,
+      "specificity": 1.0,
+      "f1": 0.9795918367346939,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "confusion_matrix": {
+        "tn": 30,
+        "fp": 0,
+        "fn": 2,
+        "tp": 48
+      }
+    },
+    "RandomForestClassifier": {
+      "threshold": 0.5,
+      "n": 80,
+      "class_distribution": {
+        "0": 30,
+        "1": 50
+      },
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall_sensitivity": 1.0,
+      "specificity": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "confusion_matrix": {
+        "tn": 30,
+        "fp": 0,
+        "fn": 0,
+        "tp": 50
+      }
+    },
+    "GradientBoostingClassifier": {
+      "threshold": 0.5,
+      "n": 80,
+      "class_distribution": {
+        "0": 30,
+        "1": 50
+      },
+      "accuracy": 0.9875,
+      "precision": 1.0,
+      "recall_sensitivity": 0.98,
+      "specificity": 1.0,
+      "f1": 0.98989898989899,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "confusion_matrix": {
+        "tn": 30,
+        "fp": 0,
+        "fn": 1,
+        "tp": 49
+      }
+    }
+  },
+  "cross_validation": {
+    "folds_requested": 5,
+    "folds_scored": 5,
+    "folds_skipped_single_class": 0,
+    "per_fold": [
+      {
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "recall_sensitivity": 1.0,
+        "f1": 1.0
+      },
+      {
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "recall_sensitivity": 1.0,
+        "f1": 1.0
+      },
+      {
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "recall_sensitivity": 1.0,
+        "f1": 1.0
+      },
+      {
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "recall_sensitivity": 1.0,
+        "f1": 1.0
+      },
+      {
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "recall_sensitivity": 1.0,
+        "f1": 1.0
+      }
+    ],
+    "summary": {
+      "roc_auc": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "pr_auc": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "recall_sensitivity": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "f1": {
+        "mean": 1.0,
+        "std": 0.0
+      }
+    }
+  },
+  "calibration": {
+    "method": "isotonic",
+    "validation_brier": {
+      "none": 0.007577597453460127,
+      "sigmoid": 0.0110394940002839,
+      "isotonic": 0.004555354124301653
+    }
+  },
+  "risk_thresholds": {
+    "low_cut": 0.5,
+    "high_cut": 0.5,
+    "policy": "the validation score distribution is near-separable (bimodal at 0/1), so sensitivity/specificity target thresholds are not informative; using a plain 0.5 cut (>= is HIGH, otherwise LOW; MODERATE unused). Treat the near-perfect metrics with caution.",
+    "target_sensitivity": 0.85,
+    "target_specificity": 0.85
+  },
+  "test_metrics": {
+    "threshold": 0.5,
+    "n": 80,
+    "class_distribution": {
+      "0": 30,
+      "1": 50
+    },
+    "accuracy": 0.9875,
+    "precision": 1.0,
+    "recall_sensitivity": 0.98,
+    "specificity": 1.0,
+    "f1": 0.98989898989899,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0,
+    "confusion_matrix": {
+      "tn": 30,
+      "fp": 0,
+      "fn": 1,
+      "tp": 49
+    },
+    "calibration": {
+      "brier": 0.005362257518899793,
+      "bins": [
+        {
+          "bin": [
+            0.0,
+            0.1
+          ],
+          "count": 30,
+          "mean_predicted": 0.000916893193526507,
+          "observed_frequency": 0.0
+        },
+        {
+          "bin": [
+            0.4,
+            0.5
+          ],
+          "count": 1,
+          "mean_predicted": 0.49868077264693433,
+          "observed_frequency": 1.0
+        },
+        {
+          "bin": [
+            0.7000000000000001,
+            0.8
+          ],
+          "count": 2,
+          "mean_predicted": 0.7474902536931352,
+          "observed_frequency": 1.0
+        },
+        {
+          "bin": [
+            0.8,
+            0.9
+          ],
+          "count": 1,
+          "mean_predicted": 0.8048416872950419,
+          "observed_frequency": 1.0
+        },
+        {
+          "bin": [
+            0.9,
+            1.0
+          ],
+          "count": 46,
+          "mean_predicted": 0.9969248239056904,
+          "observed_frequency": 1.0
+        }
+      ]
+    }
+  },
+  "test_metrics_at_low_threshold_screening": {
+    "threshold": 0.5,
+    "n": 80,
+    "class_distribution": {
+      "0": 30,
+      "1": 50
+    },
+    "accuracy": 0.9875,
+    "precision": 1.0,
+    "recall_sensitivity": 0.98,
+    "specificity": 1.0,
+    "f1": 0.98989898989899,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0,
+    "confusion_matrix": {
+      "tn": 30,
+      "fp": 0,
+      "fn": 1,
+      "tp": 49
+    }
+  },
+  "test_metrics_at_high_threshold": {
+    "threshold": 0.5,
+    "n": 80,
+    "class_distribution": {
+      "0": 30,
+      "1": 50
+    },
+    "accuracy": 0.9875,
+    "precision": 1.0,
+    "recall_sensitivity": 0.98,
+    "specificity": 1.0,
+    "f1": 0.98989898989899,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0,
+    "confusion_matrix": {
+      "tn": 30,
+      "fp": 0,
+      "fn": 1,
+      "tp": 49
+    }
+  },
+  "feature_reference": {
+    "age": {
+      "median": 54.0,
+      "p25": 42.0,
+      "p75": 64.0
+    },
+    "bp": {
+      "median": 80.0,
+      "p25": 70.0,
+      "p75": 80.0
+    },
+    "sg": {
+      "median": 1.02,
+      "p25": 1.01,
+      "p75": 1.02
+    },
+    "al": {
+      "median": 0.0,
+      "p25": 0.0,
+      "p75": 2.0
+    },
+    "su": {
+      "median": 0.0,
+      "p25": 0.0,
+      "p75": 0.0
+    },
+    "bgr": {
+      "median": 120.5,
+      "p25": 100.0,
+      "p75": 156.0
+    },
+    "bu": {
+      "median": 42.0,
+      "p25": 27.0,
+      "p75": 66.0
+    },
+    "sc": {
+      "median": 1.2,
+      "p25": 0.9,
+      "p75": 2.9
+    },
+    "sod": {
+      "median": 138.0,
+      "p25": 135.0,
+      "p75": 142.0
+    },
+    "pot": {
+      "median": 4.3,
+      "p25": 3.8,
+      "p75": 4.9
+    },
+    "hemo": {
+      "median": 12.6,
+      "p25": 10.4,
+      "p75": 15.0
+    },
+    "pcv": {
+      "median": 40.0,
+      "p25": 32.0,
+      "p75": 45.0
+    },
+    "wbcc": {
+      "median": 8100.0,
+      "p25": 6300.0,
+      "p75": 9800.0
+    },
+    "rbcc": {
+      "median": 4.8,
+      "p25": 3.9,
+      "p75": 5.5
+    },
+    "rbc": {
+      "mode": "normal"
+    },
+    "pc": {
+      "mode": "normal"
+    },
+    "pcc": {
+      "mode": "notpresent"
+    },
+    "ba": {
+      "mode": "notpresent"
+    },
+    "htn": {
+      "mode": "no"
+    },
+    "dm": {
+      "mode": "no"
+    },
+    "cad": {
+      "mode": "no"
+    },
+    "appet": {
+      "mode": "good"
+    },
+    "pe": {
+      "mode": "no"
+    },
+    "ane": {
+      "mode": "no"
+    }
+  },
+  "permutation_importance": [
+    {
+      "feature": "sg",
+      "importance": 0.007200000000000028,
+      "std": 0.004556314299957827
+    },
+    {
+      "feature": "rbc",
+      "importance": 0.004866666666666653,
+      "std": 0.0022320892057044366
+    },
+    {
+      "feature": "al",
+      "importance": 0.00339999999999997,
+      "std": 0.0025024432505498027
+    },
+    {
+      "feature": "pot",
+      "importance": 0.0031666666666666623,
+      "std": 0.0048379288497822585
+    },
+    {
+      "feature": "hemo",
+      "importance": 0.0016000000000000014,
+      "std": 0.0018184242262647822
+    },
+    {
+      "feature": "pcv",
+      "importance": 0.00039999999999998923,
+      "std": 0.0005333333333333189
+    },
+    {
+      "feature": "bgr",
+      "importance": 0.00033333333333331885,
+      "std": 0.0006146362971528517
+    },
+    {
+      "feature": "su",
+      "importance": 6.666666666665932e-05,
+      "std": 0.00019999999999997797
+    },
+    {
+      "feature": "sc",
+      "importance": 6.666666666665932e-05,
+      "std": 0.00019999999999997797
+    },
+    {
+      "feature": "rbcc",
+      "importance": 6.666666666665932e-05,
+      "std": 0.00019999999999997797
+    },
+    {
+      "feature": "age",
+      "importance": 0.0,
+      "std": 0.0
+    },
+    {
+      "feature": "bp",
+      "importance": 0.0,
+      "std": 0.0
+    },
+    {
+      "feature": "bu",
+      "importance": 0.0,
+      "std": 0.0
+    },
+    {
+      "feature": "sod",
+      "importance": 0.0,
+      "std": 0.0
+    },
+    {
+      "feature": "wbcc",
+      "importance": 0.0,
+      "std": 0.0
+    },
+    {
+      "feature": "pc",
+      "importance": 0.0,
+      "std": 0.0
+    },
+    {
+      "feature": "pcc",
+      "importance": 0.0,
+      "std": 0.0
+    },
+    {
+      "feature": "ba",
+      "importance": 0.0,
+      "std": 0.0
+    },
+    {
+      "feature": "htn",
+      "importance": 0.0,
+      "std": 0.0
+    },
+    {
+      "feature": "dm",
+      "importance": 0.0,
+      "std": 0.0
+    },
+    {
+      "feature": "cad",
+      "importance": 0.0,
+      "std": 0.0
+    },
+    {
+      "feature": "appet",
+      "importance": 0.0,
+      "std": 0.0
+    },
+    {
+      "feature": "pe",
+      "importance": 0.0,
+      "std": 0.0
+    },
+    {
+      "feature": "ane",
+      "importance": 0.0,
+      "std": 0.0
+    }
+  ],
+  "artifact": {
+    "path": "models/kidney_disease-v1.joblib",
+    "sha256": "6f314428f74b2a581bdfcbd3fbdea27daebb4f759741c78dc101cffad798f95d"
+  },
+  "output_field": "risk_score",
+  "disclaimer": "This is a risk assessment and not a medical diagnosis.",
+  "limitations": "400 records from a single hospital in India collected over ~2 months; heavy missingness in most columns; small sample",
+  "ethical_note": "",
+  "notes": "The UCI CKD dataset is close to linearly separable (haemoglobin, serum creatinine, specific gravity and albumin are highly discriminative), so test metrics are near-perfect. This reflects the dataset, not real-world screening performance on undiagnosed patients."
+}

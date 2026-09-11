@@ -54,7 +54,7 @@ class ModelStore:
                 return
             registry = read_json(registry_path).get("models", {})
             for model_id, entry in registry.items():
-                if entry.get("status") not in {"active", "experimental"}:
+                if entry.get("status") != "active":
                     continue
                 try:
                     self._bundles[entry["disease"]] = self._load_one(entry)

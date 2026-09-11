@@ -76,14 +76,16 @@ def test_artifact_handles_encoded_missing_zeros():
 @requires_model
 @requires_data
 def test_reported_test_metrics_are_reproducible():
-    """Re-run the exact split + evaluation and confirm the registry numbers."""
+    """Re-run the exact split + evaluation and confirm the recorded numbers."""
+    from ml.common.evaluation import binary_metrics
+    from ml.common.framework import _split
     from ml.common.utilities import read_json
-    from ml.diabetes.train import _split
-    from ml.diabetes.evaluate import evaluate
+    from ml.diabetes.spec import SPEC
 
     meta = read_json(Path(__file__).resolve().parents[1] / "diabetes" / "model_metadata.json")
     payload = joblib.load(ARTIFACT)
-    _, _, test, _ = _split(load_raw())
-    report = evaluate(payload["model"], test, threshold=0.5)
+    _, _, test, _ = _split(SPEC, SPEC.load())
+    prob = payload["model"].predict_proba(test[SPEC.features])[:, 1]
+    report = binary_metrics(test["target"].astype(int).to_numpy(), prob, threshold=0.5)
     assert report["roc_auc"] == pytest.approx(meta["test_metrics"]["roc_auc"], abs=1e-9)
     assert report["confusion_matrix"] == meta["test_metrics"]["confusion_matrix"]

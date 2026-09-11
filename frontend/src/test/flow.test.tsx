@@ -112,7 +112,9 @@ test("select disease → enter data → submit → see prediction and explanatio
   await user.click(screen.getByRole("button", { name: /submit assessment/i }));
 
   // results page renders the risk level and the contributing factor
-  await waitFor(() => expect(screen.getByText(/HIGH RISK — Diabetes/i)).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByText(/HIGH RISK ESTIMATE/i)).toBeInTheDocument());
+  expect(screen.getByText("Diabetes")).toBeInTheDocument();
+  expect(screen.getByText("82%")).toBeInTheDocument();
   expect(screen.getByText(/Glucose/)).toBeInTheDocument();
   expect(screen.getByText(/not a medical diagnosis/i)).toBeInTheDocument();
   expect(screen.getAllByText(/diabetes-v1/).length).toBeGreaterThan(0);
@@ -122,5 +124,5 @@ test("conditions without a model are not offered as options", async () => {
   renderApp();
   await screen.findByLabelText(/Condition/);
   expect(screen.queryByRole("option", { name: "Stroke" })).not.toBeInTheDocument();
-  expect(screen.getByText(/No model yet: Stroke/)).toBeInTheDocument();
+  expect(screen.getByText(/No trained model available: Stroke/)).toBeInTheDocument();
 });

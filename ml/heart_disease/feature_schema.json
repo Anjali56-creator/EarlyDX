@@ -1,0 +1,127 @@
+{
+  "disease": "heart_disease",
+  "model_id": "heart_disease-v1",
+  "target": "target",
+  "positive_label": "angiographic heart disease present (num > 0)",
+  "required_features": [
+    "age",
+    "sex",
+    "trestbps",
+    "chol",
+    "fbs",
+    "thalach",
+    "exang",
+    "oldpeak",
+    "ca",
+    "cp",
+    "restecg",
+    "slope",
+    "thal"
+  ],
+  "feature_details": {
+    "age": {
+      "type": "number",
+      "unit": "years",
+      "required": true,
+      "min": 29.0,
+      "max": 77.0
+    },
+    "sex": {
+      "type": "number",
+      "unit": "0 = female, 1 = male",
+      "required": true,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "trestbps": {
+      "type": "number",
+      "unit": "mm Hg (resting blood pressure)",
+      "required": true,
+      "min": 94.0,
+      "max": 200.0
+    },
+    "chol": {
+      "type": "number",
+      "unit": "mg/dL (serum cholesterol)",
+      "required": true,
+      "min": 126.0,
+      "max": 564.0
+    },
+    "fbs": {
+      "type": "number",
+      "unit": "0/1 (fasting blood sugar > 120 mg/dL)",
+      "required": true,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "thalach": {
+      "type": "number",
+      "unit": "bpm (max heart rate achieved)",
+      "required": true,
+      "min": 71.0,
+      "max": 202.0
+    },
+    "exang": {
+      "type": "number",
+      "unit": "0/1 (exercise-induced angina)",
+      "required": true,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "oldpeak": {
+      "type": "number",
+      "unit": "ST depression induced by exercise",
+      "required": true,
+      "min": 0.0,
+      "max": 6.2
+    },
+    "ca": {
+      "type": "number",
+      "unit": "count (major vessels coloured by fluoroscopy, 0-3)",
+      "required": true,
+      "min": 0.0,
+      "max": 3.0
+    },
+    "cp": {
+      "type": "categorical",
+      "unit": "",
+      "required": true,
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ]
+    },
+    "restecg": {
+      "type": "categorical",
+      "unit": "",
+      "required": true,
+      "options": [
+        "0",
+        "1",
+        "2"
+      ]
+    },
+    "slope": {
+      "type": "categorical",
+      "unit": "",
+      "required": true,
+      "options": [
+        "1",
+        "2",
+        "3"
+      ]
+    },
+    "thal": {
+      "type": "categorical",
+      "unit": "",
+      "required": true,
+      "options": [
+        "3",
+        "6",
+        "7"
+      ]
+    }
+  }
+}

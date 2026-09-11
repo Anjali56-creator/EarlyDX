@@ -1,0 +1,344 @@
+{
+  "model_id": "thyroid-v1",
+  "disease": "thyroid",
+  "display_name": "Thyroid Disease",
+  "version": "v1",
+  "algorithm": "RandomForestClassifier",
+  "baseline_algorithm": "LogisticRegression",
+  "selection_rule": "prefer LogisticRegression; a candidate is chosen only if its validation ROC-AUC exceeds the baseline by >= 0.01",
+  "random_state": 42,
+  "training_date": "2026-09-10",
+  "dataset": {
+    "name": "UCI Thyroid Disease ('new-thyroid' subset)",
+    "registry_key": "thyroid"
+  },
+  "split": {
+    "scheme": "stratified",
+    "sizes": {
+      "train": 129,
+      "val": 43,
+      "test": 43
+    }
+  },
+  "target_positive_rate": 0.3023255813953488,
+  "validation_metrics_by_candidate": {
+    "LogisticRegression": {
+      "threshold": 0.5,
+      "n": 43,
+      "class_distribution": {
+        "0": 30,
+        "1": 13
+      },
+      "accuracy": 0.8604651162790697,
+      "precision": 1.0,
+      "recall_sensitivity": 0.5384615384615384,
+      "specificity": 1.0,
+      "f1": 0.7,
+      "roc_auc": 0.7846153846153846,
+      "pr_auc": 0.8146364353645974,
+      "confusion_matrix": {
+        "tn": 30,
+        "fp": 0,
+        "fn": 6,
+        "tp": 7
+      }
+    },
+    "RandomForestClassifier": {
+      "threshold": 0.5,
+      "n": 43,
+      "class_distribution": {
+        "0": 30,
+        "1": 13
+      },
+      "accuracy": 0.9534883720930233,
+      "precision": 1.0,
+      "recall_sensitivity": 0.8461538461538461,
+      "specificity": 1.0,
+      "f1": 0.9166666666666666,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "confusion_matrix": {
+        "tn": 30,
+        "fp": 0,
+        "fn": 2,
+        "tp": 11
+      }
+    },
+    "GradientBoostingClassifier": {
+      "threshold": 0.5,
+      "n": 43,
+      "class_distribution": {
+        "0": 30,
+        "1": 13
+      },
+      "accuracy": 0.9534883720930233,
+      "precision": 1.0,
+      "recall_sensitivity": 0.8461538461538461,
+      "specificity": 1.0,
+      "f1": 0.9166666666666666,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "confusion_matrix": {
+        "tn": 30,
+        "fp": 0,
+        "fn": 2,
+        "tp": 11
+      }
+    }
+  },
+  "cross_validation": {
+    "folds_requested": 5,
+    "folds_scored": 5,
+    "folds_skipped_single_class": 0,
+    "per_fold": [
+      {
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "recall_sensitivity": 0.9090909090909091,
+        "f1": 0.9523809523809523
+      },
+      {
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "recall_sensitivity": 0.9090909090909091,
+        "f1": 0.9523809523809523
+      },
+      {
+        "roc_auc": 0.9791666666666667,
+        "pr_auc": 0.9614285714285714,
+        "recall_sensitivity": 0.8,
+        "f1": 0.8421052631578947
+      },
+      {
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "recall_sensitivity": 0.9,
+        "f1": 0.9473684210526315
+      },
+      {
+        "roc_auc": 0.9958333333333333,
+        "pr_auc": 0.9909090909090909,
+        "recall_sensitivity": 0.9,
+        "f1": 0.9
+      }
+    ],
+    "summary": {
+      "roc_auc": {
+        "mean": 0.9950000000000001,
+        "std": 0.008079466429027186
+      },
+      "pr_auc": {
+        "mean": 0.9904675324675324,
+        "std": 0.01494028141537001
+      },
+      "recall_sensitivity": {
+        "mean": 0.8836363636363636,
+        "std": 0.042015345484695765
+      },
+      "f1": {
+        "mean": 0.9188471177944862,
+        "std": 0.04314400761614761
+      }
+    }
+  },
+  "calibration": {
+    "method": "isotonic",
+    "validation_brier": {
+      "none": 0.04663802464177458,
+      "sigmoid": 0.05468589190494669,
+      "isotonic": 0.03984848889835819
+    }
+  },
+  "risk_thresholds": {
+    "low_cut": 0.05,
+    "high_cut": 0.05,
+    "policy": "validation sensitivity and specificity targets could not both be satisfied without the bands crossing; single cut at the validation median score 0.0500 (>= is HIGH, otherwise LOW; MODERATE unused).",
+    "target_sensitivity": 0.85,
+    "target_specificity": 0.85
+  },
+  "test_metrics": {
+    "threshold": 0.5,
+    "n": 43,
+    "class_distribution": {
+      "0": 30,
+      "1": 13
+    },
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall_sensitivity": 1.0,
+    "specificity": 1.0,
+    "f1": 1.0,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0,
+    "confusion_matrix": {
+      "tn": 30,
+      "fp": 0,
+      "fn": 0,
+      "tp": 13
+    },
+    "calibration": {
+      "brier": 0.007438547350221457,
+      "bins": [
+        {
+          "bin": [
+            0.0,
+            0.1
+          ],
+          "count": 27,
+          "mean_predicted": 0.0059732089845255755,
+          "observed_frequency": 0.0
+        },
+        {
+          "bin": [
+            0.1,
+            0.2
+          ],
+          "count": 2,
+          "mean_predicted": 0.14080025689009257,
+          "observed_frequency": 0.0
+        },
+        {
+          "bin": [
+            0.2,
+            0.30000000000000004
+          ],
+          "count": 1,
+          "mean_predicted": 0.2294171510285726,
+          "observed_frequency": 0.0
+        },
+        {
+          "bin": [
+            0.6000000000000001,
+            0.7000000000000001
+          ],
+          "count": 1,
+          "mean_predicted": 0.610979581008329,
+          "observed_frequency": 1.0
+        },
+        {
+          "bin": [
+            0.7000000000000001,
+            0.8
+          ],
+          "count": 1,
+          "mean_predicted": 0.7632233124404062,
+          "observed_frequency": 1.0
+        },
+        {
+          "bin": [
+            0.9,
+            1.0
+          ],
+          "count": 11,
+          "mean_predicted": 0.9841277994560059,
+          "observed_frequency": 1.0
+        }
+      ]
+    }
+  },
+  "test_metrics_at_low_threshold_screening": {
+    "threshold": 0.05,
+    "n": 43,
+    "class_distribution": {
+      "0": 30,
+      "1": 13
+    },
+    "accuracy": 0.8837209302325582,
+    "precision": 0.7222222222222222,
+    "recall_sensitivity": 1.0,
+    "specificity": 0.8333333333333334,
+    "f1": 0.8387096774193549,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0,
+    "confusion_matrix": {
+      "tn": 25,
+      "fp": 5,
+      "fn": 0,
+      "tp": 13
+    }
+  },
+  "test_metrics_at_high_threshold": {
+    "threshold": 0.05,
+    "n": 43,
+    "class_distribution": {
+      "0": 30,
+      "1": 13
+    },
+    "accuracy": 0.8837209302325582,
+    "precision": 0.7222222222222222,
+    "recall_sensitivity": 1.0,
+    "specificity": 0.8333333333333334,
+    "f1": 0.8387096774193549,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0,
+    "confusion_matrix": {
+      "tn": 25,
+      "fp": 5,
+      "fn": 0,
+      "tp": 13
+    }
+  },
+  "feature_reference": {
+    "T3_resin": {
+      "median": 110.5,
+      "p25": 103.0,
+      "p75": 117.25
+    },
+    "total_thyroxin": {
+      "median": 9.1,
+      "p25": 7.1,
+      "p75": 11.15
+    },
+    "total_triiodothyronine": {
+      "median": 1.8,
+      "p25": 1.4,
+      "p75": 2.2
+    },
+    "TSH": {
+      "median": 1.3,
+      "p25": 1.0,
+      "p75": 1.7
+    },
+    "TSH_diff_after_TRH": {
+      "median": 2.3,
+      "p25": 0.8,
+      "p75": 4.3
+    }
+  },
+  "permutation_importance": [
+    {
+      "feature": "total_thyroxin",
+      "importance": 0.09089743589743585,
+      "std": 0.028744550408247024
+    },
+    {
+      "feature": "TSH_diff_after_TRH",
+      "importance": 0.01615384615384612,
+      "std": 0.010386989282322609
+    },
+    {
+      "feature": "total_triiodothyronine",
+      "importance": 0.005384615384615365,
+      "std": 0.0021299035545943707
+    },
+    {
+      "feature": "TSH",
+      "importance": 0.003076923076923066,
+      "std": 0.0029902317409462977
+    },
+    {
+      "feature": "T3_resin",
+      "importance": 0.0002564102564102555,
+      "std": 0.0007692307692307665
+    }
+  ],
+  "artifact": {
+    "path": "models/thyroid-v1.joblib",
+    "sha256": "696d4f3afbb3f3f0945f80ac684099ed02369e719af977ab6f4e321529f99432"
+  },
+  "output_field": "risk_score",
+  "disclaimer": "This is a risk assessment and not a medical diagnosis.",
+  "limitations": "only 215 samples; historical (Garvan Institute); the larger UCI thyroid subsets (sick, allhypo, thyroid0387) were not used in V1; five assay values, not routine intake data",
+  "ethical_note": "",
+  "notes": "The small new-thyroid subset is close to separable, so test metrics are near-perfect; this reflects the dataset, not real-world performance."
+}

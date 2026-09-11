@@ -9,6 +9,7 @@ import { Results } from "./pages/Results";
 import { Diseases } from "./pages/Diseases";
 import { Models } from "./pages/Models";
 import { Datasets } from "./pages/Datasets";
+import { Validation } from "./pages/Validation";
 import { About } from "./pages/About";
 
 const router = createBrowserRouter([
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
       { path: "diseases", element: <Diseases /> },
       { path: "models", element: <Models /> },
       { path: "datasets", element: <Datasets /> },
+      { path: "validation", element: <Validation /> },
       { path: "about", element: <About /> },
     ],
   },

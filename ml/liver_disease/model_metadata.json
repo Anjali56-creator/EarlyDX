@@ -1,0 +1,408 @@
+{
+  "model_id": "liver_disease-v1",
+  "disease": "liver_disease",
+  "display_name": "Liver Disease",
+  "version": "v1",
+  "algorithm": "RandomForestClassifier",
+  "baseline_algorithm": "LogisticRegression",
+  "selection_rule": "prefer LogisticRegression; a candidate is chosen only if its validation ROC-AUC exceeds the baseline by >= 0.01",
+  "random_state": 42,
+  "training_date": "2026-09-10",
+  "dataset": {
+    "name": "UCI Indian Liver Patient Dataset (ILPD)",
+    "registry_key": "liver_disease"
+  },
+  "split": {
+    "scheme": "stratified",
+    "sizes": {
+      "train": 349,
+      "val": 117,
+      "test": 117
+    }
+  },
+  "target_positive_rate": 0.7135506003430532,
+  "validation_metrics_by_candidate": {
+    "LogisticRegression": {
+      "threshold": 0.5,
+      "n": 117,
+      "class_distribution": {
+        "0": 33,
+        "1": 84
+      },
+      "accuracy": 0.6752136752136753,
+      "precision": 0.8833333333333333,
+      "recall_sensitivity": 0.6309523809523809,
+      "specificity": 0.7878787878787878,
+      "f1": 0.7361111111111112,
+      "roc_auc": 0.7824675324675325,
+      "pr_auc": 0.9115108411698876,
+      "confusion_matrix": {
+        "tn": 26,
+        "fp": 7,
+        "fn": 31,
+        "tp": 53
+      }
+    },
+    "RandomForestClassifier": {
+      "threshold": 0.5,
+      "n": 117,
+      "class_distribution": {
+        "0": 33,
+        "1": 84
+      },
+      "accuracy": 0.7606837606837606,
+      "precision": 0.8181818181818182,
+      "recall_sensitivity": 0.8571428571428571,
+      "specificity": 0.5151515151515151,
+      "f1": 0.8372093023255814,
+      "roc_auc": 0.8246753246753247,
+      "pr_auc": 0.9307099653485749,
+      "confusion_matrix": {
+        "tn": 17,
+        "fp": 16,
+        "fn": 12,
+        "tp": 72
+      }
+    },
+    "GradientBoostingClassifier": {
+      "threshold": 0.5,
+      "n": 117,
+      "class_distribution": {
+        "0": 33,
+        "1": 84
+      },
+      "accuracy": 0.7264957264957265,
+      "precision": 0.76,
+      "recall_sensitivity": 0.9047619047619048,
+      "specificity": 0.2727272727272727,
+      "f1": 0.8260869565217391,
+      "roc_auc": 0.7756132756132756,
+      "pr_auc": 0.9148295437412542,
+      "confusion_matrix": {
+        "tn": 9,
+        "fp": 24,
+        "fn": 8,
+        "tp": 76
+      }
+    }
+  },
+  "cross_validation": {
+    "folds": 5,
+    "per_fold": [
+      {
+        "roc_auc": 0.7081260364842455,
+        "pr_auc": 0.8755459573708907,
+        "recall_sensitivity": 0.7910447761194029,
+        "f1": 0.7681159420289855
+      },
+      {
+        "roc_auc": 0.7841561423650976,
+        "pr_auc": 0.9058566075470107,
+        "recall_sensitivity": 0.835820895522388,
+        "f1": 0.8296296296296296
+      },
+      {
+        "roc_auc": 0.7370838117106774,
+        "pr_auc": 0.8681474258572047,
+        "recall_sensitivity": 0.7164179104477612,
+        "f1": 0.7559055118110236
+      },
+      {
+        "roc_auc": 0.728956228956229,
+        "pr_auc": 0.8824603763265095,
+        "recall_sensitivity": 0.7878787878787878,
+        "f1": 0.7878787878787878
+      },
+      {
+        "roc_auc": 0.7334455667789002,
+        "pr_auc": 0.8894365061098095,
+        "recall_sensitivity": 0.8333333333333334,
+        "f1": 0.7913669064748201
+      }
+    ],
+    "summary": {
+      "roc_auc": {
+        "mean": 0.7383535572590298,
+        "std": 0.02500236076105542
+      },
+      "pr_auc": {
+        "mean": 0.8842893746422849,
+        "std": 0.012899562694228392
+      },
+      "recall_sensitivity": {
+        "mean": 0.7928991406603347,
+        "std": 0.04325557111468048
+      },
+      "f1": {
+        "mean": 0.7865793555646493,
+        "std": 0.025138486808625522
+      }
+    }
+  },
+  "calibration": {
+    "method": "none",
+    "validation_brier": {
+      "none": 0.15447999041653915,
+      "sigmoid": 0.16585893669419963,
+      "isotonic": 0.1599254606629425
+    }
+  },
+  "risk_thresholds": {
+    "low_cut": 0.5012114463404975,
+    "high_cut": 0.7304155331812975,
+    "policy": "HIGH if score >= 0.7304 (largest validation threshold with specificity >= 0.85); LOW if score < 0.5012 (smallest validation threshold with sensitivity >= 0.85); MODERATE otherwise.",
+    "target_sensitivity": 0.85,
+    "target_specificity": 0.85
+  },
+  "test_metrics": {
+    "threshold": 0.5,
+    "n": 117,
+    "class_distribution": {
+      "0": 34,
+      "1": 83
+    },
+    "accuracy": 0.7350427350427351,
+    "precision": 0.7954545454545454,
+    "recall_sensitivity": 0.8433734939759037,
+    "specificity": 0.47058823529411764,
+    "f1": 0.8187134502923976,
+    "roc_auc": 0.7944720056697377,
+    "pr_auc": 0.915960465481389,
+    "confusion_matrix": {
+      "tn": 16,
+      "fp": 18,
+      "fn": 13,
+      "tp": 70
+    },
+    "calibration": {
+      "brier": 0.16390417160457268,
+      "bins": [
+        {
+          "bin": [
+            0.2,
+            0.30000000000000004
+          ],
+          "count": 1,
+          "mean_predicted": 0.2906100248850151,
+          "observed_frequency": 0.0
+        },
+        {
+          "bin": [
+            0.30000000000000004,
+            0.4
+          ],
+          "count": 13,
+          "mean_predicted": 0.35781684785534373,
+          "observed_frequency": 0.38461538461538464
+        },
+        {
+          "bin": [
+            0.4,
+            0.5
+          ],
+          "count": 15,
+          "mean_predicted": 0.45776331002405557,
+          "observed_frequency": 0.5333333333333333
+        },
+        {
+          "bin": [
+            0.5,
+            0.6000000000000001
+          ],
+          "count": 12,
+          "mean_predicted": 0.5510880702803599,
+          "observed_frequency": 0.5
+        },
+        {
+          "bin": [
+            0.6000000000000001,
+            0.7000000000000001
+          ],
+          "count": 20,
+          "mean_predicted": 0.6411150209344428,
+          "observed_frequency": 0.65
+        },
+        {
+          "bin": [
+            0.7000000000000001,
+            0.8
+          ],
+          "count": 15,
+          "mean_predicted": 0.7402140778301053,
+          "observed_frequency": 0.8
+        },
+        {
+          "bin": [
+            0.8,
+            0.9
+          ],
+          "count": 21,
+          "mean_predicted": 0.8551207620433422,
+          "observed_frequency": 0.9047619047619048
+        },
+        {
+          "bin": [
+            0.9,
+            1.0
+          ],
+          "count": 20,
+          "mean_predicted": 0.9496218534000771,
+          "observed_frequency": 1.0
+        }
+      ]
+    }
+  },
+  "test_metrics_at_low_threshold_screening": {
+    "threshold": 0.5012114463404975,
+    "n": 117,
+    "class_distribution": {
+      "0": 34,
+      "1": 83
+    },
+    "accuracy": 0.7350427350427351,
+    "precision": 0.7954545454545454,
+    "recall_sensitivity": 0.8433734939759037,
+    "specificity": 0.47058823529411764,
+    "f1": 0.8187134502923976,
+    "roc_auc": 0.7944720056697377,
+    "pr_auc": 0.915960465481389,
+    "confusion_matrix": {
+      "tn": 16,
+      "fp": 18,
+      "fn": 13,
+      "tp": 70
+    }
+  },
+  "test_metrics_at_high_threshold": {
+    "threshold": 0.7304155331812975,
+    "n": 117,
+    "class_distribution": {
+      "0": 34,
+      "1": 83
+    },
+    "accuracy": 0.6666666666666666,
+    "precision": 0.94,
+    "recall_sensitivity": 0.5662650602409639,
+    "specificity": 0.9117647058823529,
+    "f1": 0.706766917293233,
+    "roc_auc": 0.7944720056697377,
+    "pr_auc": 0.915960465481389,
+    "confusion_matrix": {
+      "tn": 31,
+      "fp": 3,
+      "fn": 36,
+      "tp": 47
+    }
+  },
+  "feature_reference": {
+    "Age": {
+      "median": 45.0,
+      "p25": 33.0,
+      "p75": 57.0
+    },
+    "Total_Bilirubin": {
+      "median": 1.0,
+      "p25": 0.8,
+      "p75": 2.6
+    },
+    "Direct_Bilirubin": {
+      "median": 0.3,
+      "p25": 0.2,
+      "p75": 1.275
+    },
+    "Alkaline_Phosphotase": {
+      "median": 208.5,
+      "p25": 176.25,
+      "p75": 298.0
+    },
+    "Alamine_Aminotransferase": {
+      "median": 35.0,
+      "p25": 23.0,
+      "p75": 60.0
+    },
+    "Aspartate_Aminotransferase": {
+      "median": 41.0,
+      "p25": 25.0,
+      "p75": 83.75
+    },
+    "Total_Protiens": {
+      "median": 6.55,
+      "p25": 5.7,
+      "p75": 7.2
+    },
+    "Albumin": {
+      "median": 3.1,
+      "p25": 2.6,
+      "p75": 3.8
+    },
+    "Albumin_and_Globulin_Ratio": {
+      "median": 0.955,
+      "p25": 0.75,
+      "p75": 1.1
+    },
+    "Gender": {
+      "mode": "Male"
+    }
+  },
+  "permutation_importance": [
+    {
+      "feature": "Total_Bilirubin",
+      "importance": 0.03944011339475549,
+      "std": 0.012561550432866355
+    },
+    {
+      "feature": "Alkaline_Phosphotase",
+      "importance": 0.035790219702338734,
+      "std": 0.01388977273422099
+    },
+    {
+      "feature": "Aspartate_Aminotransferase",
+      "importance": 0.034656272147413146,
+      "std": 0.012998538495256921
+    },
+    {
+      "feature": "Direct_Bilirubin",
+      "importance": 0.02778171509567682,
+      "std": 0.015525760626738192
+    },
+    {
+      "feature": "Age",
+      "importance": 0.02239546420978026,
+      "std": 0.016476570381242964
+    },
+    {
+      "feature": "Alamine_Aminotransferase",
+      "importance": 0.022253720765414597,
+      "std": 0.018237457601345777
+    },
+    {
+      "feature": "Total_Protiens",
+      "importance": 0.003968816442239564,
+      "std": 0.00817762634159444
+    },
+    {
+      "feature": "Gender",
+      "importance": -0.0008504606661942193,
+      "std": 0.002671591328840641
+    },
+    {
+      "feature": "Albumin_and_Globulin_Ratio",
+      "importance": -0.008043940467753353,
+      "std": 0.003450404915729069
+    },
+    {
+      "feature": "Albumin",
+      "importance": -0.011197732104890178,
+      "std": 0.00905828224446235
+    }
+  ],
+  "artifact": {
+    "path": "models/liver_disease-v1.joblib",
+    "sha256": "a4a01e21a3e911338f603838c0623e2d72c9f678cfaa6de8b4ae995e8c186587"
+  },
+  "output_field": "risk_score",
+  "disclaimer": "This is a risk assessment and not a medical diagnosis.",
+  "limitations": "583 records from one region of Andhra Pradesh, India; class imbalance (~71% patients); strong sex imbalance; a few missing Albumin_and_Globulin_Ratio values",
+  "ethical_note": "",
+  "notes": "Score is a model output called risk_score; it is a calibrated probability only when calibration.method != 'none'."
+}

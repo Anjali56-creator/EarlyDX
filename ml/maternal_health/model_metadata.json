@@ -1,0 +1,388 @@
+{
+  "model_id": "maternal_health-v1",
+  "disease": "maternal_health",
+  "display_name": "Maternal Health Risk",
+  "version": "v1",
+  "algorithm": "RandomForestClassifier",
+  "baseline_algorithm": "LogisticRegression",
+  "selection_rule": "prefer LogisticRegression; a candidate is chosen only if its validation ROC-AUC exceeds the baseline by >= 0.01",
+  "random_state": 42,
+  "training_date": "2026-09-10",
+  "dataset": {
+    "name": "UCI Maternal Health Risk",
+    "registry_key": "maternal_health"
+  },
+  "split": {
+    "scheme": "stratified",
+    "sizes": {
+      "train": 255,
+      "val": 86,
+      "test": 86
+    }
+  },
+  "target_positive_rate": 0.26229508196721313,
+  "validation_metrics_by_candidate": {
+    "LogisticRegression": {
+      "threshold": 0.5,
+      "n": 86,
+      "class_distribution": {
+        "0": 64,
+        "1": 22
+      },
+      "accuracy": 0.8488372093023255,
+      "precision": 0.7647058823529411,
+      "recall_sensitivity": 0.5909090909090909,
+      "specificity": 0.9375,
+      "f1": 0.6666666666666666,
+      "roc_auc": 0.8892045454545454,
+      "pr_auc": 0.7612288554111675,
+      "confusion_matrix": {
+        "tn": 60,
+        "fp": 4,
+        "fn": 9,
+        "tp": 13
+      }
+    },
+    "RandomForestClassifier": {
+      "threshold": 0.5,
+      "n": 86,
+      "class_distribution": {
+        "0": 64,
+        "1": 22
+      },
+      "accuracy": 0.8953488372093024,
+      "precision": 0.8421052631578947,
+      "recall_sensitivity": 0.7272727272727273,
+      "specificity": 0.953125,
+      "f1": 0.7804878048780488,
+      "roc_auc": 0.9595170454545454,
+      "pr_auc": 0.8566810179022454,
+      "confusion_matrix": {
+        "tn": 61,
+        "fp": 3,
+        "fn": 6,
+        "tp": 16
+      }
+    },
+    "GradientBoostingClassifier": {
+      "threshold": 0.5,
+      "n": 86,
+      "class_distribution": {
+        "0": 64,
+        "1": 22
+      },
+      "accuracy": 0.8837209302325582,
+      "precision": 0.8333333333333334,
+      "recall_sensitivity": 0.6818181818181818,
+      "specificity": 0.953125,
+      "f1": 0.75,
+      "roc_auc": 0.9460227272727273,
+      "pr_auc": 0.8722605792911846,
+      "confusion_matrix": {
+        "tn": 61,
+        "fp": 3,
+        "fn": 7,
+        "tp": 15
+      }
+    }
+  },
+  "cross_validation": {
+    "folds": 5,
+    "per_fold": [
+      {
+        "roc_auc": 0.9150326797385621,
+        "pr_auc": 0.838073659513288,
+        "recall_sensitivity": 0.8333333333333334,
+        "f1": 0.7692307692307693
+      },
+      {
+        "roc_auc": 0.8442906574394463,
+        "pr_auc": 0.651355000580144,
+        "recall_sensitivity": 0.6470588235294118,
+        "f1": 0.6470588235294118
+      },
+      {
+        "roc_auc": 0.9555555555555555,
+        "pr_auc": 0.8806620621094307,
+        "recall_sensitivity": 0.8888888888888888,
+        "f1": 0.8205128205128205
+      },
+      {
+        "roc_auc": 0.9588888888888889,
+        "pr_auc": 0.8965936840936841,
+        "recall_sensitivity": 0.7777777777777778,
+        "f1": 0.8235294117647058
+      },
+      {
+        "roc_auc": 0.9577777777777778,
+        "pr_auc": 0.8694262782327014,
+        "recall_sensitivity": 1.0,
+        "f1": 0.8571428571428571
+      }
+    ],
+    "summary": {
+      "roc_auc": {
+        "mean": 0.926309111880046,
+        "std": 0.04418429146576862
+      },
+      "pr_auc": {
+        "mean": 0.8272221369058496,
+        "std": 0.08999603534871883
+      },
+      "recall_sensitivity": {
+        "mean": 0.8294117647058823,
+        "std": 0.11710842564405247
+      },
+      "f1": {
+        "mean": 0.7834949364361129,
+        "std": 0.07377720318896787
+      }
+    }
+  },
+  "calibration": {
+    "method": "none",
+    "validation_brier": {
+      "none": 0.07718440832532586,
+      "sigmoid": 0.08563997433832828,
+      "isotonic": 0.08442032296737997
+    }
+  },
+  "risk_thresholds": {
+    "low_cut": 0.09980070999016974,
+    "high_cut": 0.09980070999016974,
+    "policy": "validation sensitivity and specificity targets could not both be satisfied without the bands crossing; single cut at the validation median score 0.0998 (>= is HIGH, otherwise LOW; MODERATE unused).",
+    "target_sensitivity": 0.85,
+    "target_specificity": 0.85
+  },
+  "test_metrics": {
+    "threshold": 0.5,
+    "n": 86,
+    "class_distribution": {
+      "0": 63,
+      "1": 23
+    },
+    "accuracy": 0.8837209302325582,
+    "precision": 0.7407407407407407,
+    "recall_sensitivity": 0.8695652173913043,
+    "specificity": 0.8888888888888888,
+    "f1": 0.8,
+    "roc_auc": 0.9489302967563837,
+    "pr_auc": 0.8949121558982951,
+    "confusion_matrix": {
+      "tn": 56,
+      "fp": 7,
+      "fn": 3,
+      "tp": 20
+    },
+    "calibration": {
+      "brier": 0.0783397246424164,
+      "bins": [
+        {
+          "bin": [
+            0.0,
+            0.1
+          ],
+          "count": 41,
+          "mean_predicted": 0.0406797574688807,
+          "observed_frequency": 0.024390243902439025
+        },
+        {
+          "bin": [
+            0.1,
+            0.2
+          ],
+          "count": 9,
+          "mean_predicted": 0.14773994440330773,
+          "observed_frequency": 0.1111111111111111
+        },
+        {
+          "bin": [
+            0.2,
+            0.30000000000000004
+          ],
+          "count": 3,
+          "mean_predicted": 0.25661353466548015,
+          "observed_frequency": 0.0
+        },
+        {
+          "bin": [
+            0.30000000000000004,
+            0.4
+          ],
+          "count": 4,
+          "mean_predicted": 0.35555801198510345,
+          "observed_frequency": 0.0
+        },
+        {
+          "bin": [
+            0.4,
+            0.5
+          ],
+          "count": 2,
+          "mean_predicted": 0.4397782712234756,
+          "observed_frequency": 0.5
+        },
+        {
+          "bin": [
+            0.5,
+            0.6000000000000001
+          ],
+          "count": 6,
+          "mean_predicted": 0.5602748176645033,
+          "observed_frequency": 0.16666666666666666
+        },
+        {
+          "bin": [
+            0.6000000000000001,
+            0.7000000000000001
+          ],
+          "count": 1,
+          "mean_predicted": 0.6663300074936812,
+          "observed_frequency": 1.0
+        },
+        {
+          "bin": [
+            0.7000000000000001,
+            0.8
+          ],
+          "count": 5,
+          "mean_predicted": 0.7453941011398539,
+          "observed_frequency": 0.8
+        },
+        {
+          "bin": [
+            0.8,
+            0.9
+          ],
+          "count": 7,
+          "mean_predicted": 0.83887962495697,
+          "observed_frequency": 1.0
+        },
+        {
+          "bin": [
+            0.9,
+            1.0
+          ],
+          "count": 8,
+          "mean_predicted": 0.9528800113015304,
+          "observed_frequency": 0.875
+        }
+      ]
+    }
+  },
+  "test_metrics_at_low_threshold_screening": {
+    "threshold": 0.09980070999016974,
+    "n": 86,
+    "class_distribution": {
+      "0": 63,
+      "1": 23
+    },
+    "accuracy": 0.7209302325581395,
+    "precision": 0.4888888888888889,
+    "recall_sensitivity": 0.9565217391304348,
+    "specificity": 0.6349206349206349,
+    "f1": 0.6470588235294118,
+    "roc_auc": 0.9489302967563837,
+    "pr_auc": 0.8949121558982951,
+    "confusion_matrix": {
+      "tn": 40,
+      "fp": 23,
+      "fn": 1,
+      "tp": 22
+    }
+  },
+  "test_metrics_at_high_threshold": {
+    "threshold": 0.09980070999016974,
+    "n": 86,
+    "class_distribution": {
+      "0": 63,
+      "1": 23
+    },
+    "accuracy": 0.7209302325581395,
+    "precision": 0.4888888888888889,
+    "recall_sensitivity": 0.9565217391304348,
+    "specificity": 0.6349206349206349,
+    "f1": 0.6470588235294118,
+    "roc_auc": 0.9489302967563837,
+    "pr_auc": 0.8949121558982951,
+    "confusion_matrix": {
+      "tn": 40,
+      "fp": 23,
+      "fn": 1,
+      "tp": 22
+    }
+  },
+  "feature_reference": {
+    "Age": {
+      "median": 25.0,
+      "p25": 19.0,
+      "p75": 35.0
+    },
+    "SystolicBP": {
+      "median": 120.0,
+      "p25": 90.0,
+      "p75": 120.0
+    },
+    "DiastolicBP": {
+      "median": 76.0,
+      "p25": 65.0,
+      "p75": 85.0
+    },
+    "BS": {
+      "median": 7.5,
+      "p25": 6.9,
+      "p75": 7.9
+    },
+    "BodyTemp": {
+      "median": 98.0,
+      "p25": 98.0,
+      "p75": 98.0
+    },
+    "HeartRate": {
+      "median": 76.0,
+      "p25": 70.0,
+      "p75": 80.0
+    }
+  },
+  "permutation_importance": [
+    {
+      "feature": "BS",
+      "importance": 0.12777777777777782,
+      "std": 0.01980571122792975
+    },
+    {
+      "feature": "SystolicBP",
+      "importance": 0.06853002070393378,
+      "std": 0.015582451703723462
+    },
+    {
+      "feature": "BodyTemp",
+      "importance": 0.031884057971014526,
+      "std": 0.01340276577743537
+    },
+    {
+      "feature": "Age",
+      "importance": 0.022843340234644627,
+      "std": 0.00999356575553081
+    },
+    {
+      "feature": "DiastolicBP",
+      "importance": 0.007660455486542495,
+      "std": 0.006229938700391991
+    },
+    {
+      "feature": "HeartRate",
+      "importance": -6.901311249135622e-05,
+      "std": 0.009042824761449256
+    }
+  ],
+  "artifact": {
+    "path": "models/maternal_health-v1.joblib",
+    "sha256": "2d3efdb23dff61d11f15b0b15228b9a869457860bd7816cfbd21b429db904a2b"
+  },
+  "output_field": "risk_score",
+  "disclaimer": "This is a risk assessment and not a medical diagnosis.",
+  "limitations": "collected via IoT devices from rural Bangladesh clinics; the raw file contains many exact-duplicate rows (dropped here); the upstream risk-level labelling method is not fully specified",
+  "ethical_note": "",
+  "notes": "Score is a model output called risk_score; it is a calibrated probability only when calibration.method != 'none'."
+}

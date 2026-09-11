@@ -1,13 +1,27 @@
 import { NavLink, Outlet } from "react-router-dom";
 
-const links = [
-  ["/dashboard", "Dashboard"],
-  ["/assessment", "Assessment"],
-  ["/results", "Results"],
-  ["/diseases", "Diseases"],
-  ["/models", "Models"],
-  ["/datasets", "Datasets"],
-  ["/about", "About"],
+const navGroups: { heading: string; links: [string, string, boolean?][] }[] = [
+  {
+    heading: "Main",
+    links: [
+      ["/dashboard", "Dashboard"],
+      ["/assessment", "New Assessment", true],
+      ["/results", "Results"],
+    ],
+  },
+  {
+    heading: "Research",
+    links: [
+      ["/diseases", "Diseases"],
+      ["/models", "Models"],
+      ["/datasets", "Datasets"],
+      ["/validation", "Validation"],
+    ],
+  },
+  {
+    heading: "Info",
+    links: [["/about", "About"]],
+  },
 ];
 
 export function Layout() {
@@ -19,10 +33,19 @@ export function Layout() {
           <small>early risk assessment — research prototype</small>
         </div>
         <nav className="nav">
-          {links.map(([to, label]) => (
-            <NavLink key={to} to={to} className={({ isActive }) => (isActive ? "active" : "")}>
-              {label}
-            </NavLink>
+          {navGroups.map((group) => (
+            <div className="nav-group" key={group.heading}>
+              <div className="nav-heading">{group.heading}</div>
+              {group.links.map(([to, label, primary]) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  className={({ isActive }) => [isActive ? "active" : "", primary ? "primary" : ""].filter(Boolean).join(" ")}
+                >
+                  {label}
+                </NavLink>
+              ))}
+            </div>
           ))}
         </nav>
       </aside>

@@ -8,11 +8,16 @@ export interface DiseaseInfo {
 }
 
 export interface FeatureDetail {
-  type: string;
+  type: "number" | "categorical";
   unit: string;
-  min: number;
-  max: number;
+  min?: number;
+  max?: number;
+  options?: string[];
   required: boolean;
+  /** If true, an input of exactly 0 means "not measured": the model's own
+   * preprocessing treats 0 as missing and imputes it, so 0 is valid input
+   * even though it falls outside [min, max]. */
+  zero_is_missing?: boolean;
 }
 
 export interface FeatureSchema {
@@ -43,8 +48,32 @@ export interface PredictionResponse {
   model_performance: Record<string, number | null>;
   important_features: ImportantFeature[];
   threshold_policy: string | null;
+  /** The validation-derived cut points behind risk_level (real numbers from
+   * this model's own training run, not invented clinical zones). */
+  risk_thresholds?: { low_cut: number | null; high_cut: number | null } | null;
+  /** The 0.5 cut used for this model's standard evaluation metrics
+   * (accuracy/precision/recall/F1) — not a clinical threshold. */
+  decision_threshold?: number | null;
+  /** risk_score >= decision_threshold, as 0/1. */
+  predicted_class?: number | null;
   disclaimer: string;
   session_id: number | null;
+}
+
+export interface ValidationSample {
+  features: Record<string, number | string>;
+  actual_outcome: 0 | 1;
+  predicted_probability: number;
+  predicted_outcome: 0 | 1;
+  predicted_risk_level: "LOW" | "MODERATE" | "HIGH";
+}
+
+export interface ValidationSamples {
+  disease: string;
+  disease_key: string;
+  model_version: string;
+  note: string;
+  samples: ValidationSample[];
 }
 
 export interface PredictAllResponse {

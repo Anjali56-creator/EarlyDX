@@ -1,0 +1,420 @@
+{
+  "model_id": "heart_failure-v1",
+  "disease": "heart_failure",
+  "display_name": "Heart Failure",
+  "version": "v1",
+  "algorithm": "RandomForestClassifier",
+  "baseline_algorithm": "LogisticRegression",
+  "selection_rule": "prefer LogisticRegression; a candidate is chosen only if its validation ROC-AUC exceeds the baseline by >= 0.01",
+  "random_state": 42,
+  "training_date": "2026-09-10",
+  "dataset": {
+    "name": "UCI Heart Failure Clinical Records",
+    "registry_key": "heart_failure"
+  },
+  "split": {
+    "scheme": "stratified",
+    "sizes": {
+      "train": 179,
+      "val": 60,
+      "test": 60
+    }
+  },
+  "target_positive_rate": 0.3210702341137124,
+  "validation_metrics_by_candidate": {
+    "LogisticRegression": {
+      "threshold": 0.5,
+      "n": 60,
+      "class_distribution": {
+        "0": 41,
+        "1": 19
+      },
+      "accuracy": 0.6666666666666666,
+      "precision": 0.4827586206896552,
+      "recall_sensitivity": 0.7368421052631579,
+      "specificity": 0.6341463414634146,
+      "f1": 0.5833333333333334,
+      "roc_auc": 0.7958921694480102,
+      "pr_auc": 0.6300278339659751,
+      "confusion_matrix": {
+        "tn": 26,
+        "fp": 15,
+        "fn": 5,
+        "tp": 14
+      }
+    },
+    "RandomForestClassifier": {
+      "threshold": 0.5,
+      "n": 60,
+      "class_distribution": {
+        "0": 41,
+        "1": 19
+      },
+      "accuracy": 0.8166666666666667,
+      "precision": 0.7,
+      "recall_sensitivity": 0.7368421052631579,
+      "specificity": 0.8536585365853658,
+      "f1": 0.717948717948718,
+      "roc_auc": 0.8498074454428755,
+      "pr_auc": 0.7213891116190101,
+      "confusion_matrix": {
+        "tn": 35,
+        "fp": 6,
+        "fn": 5,
+        "tp": 14
+      }
+    },
+    "GradientBoostingClassifier": {
+      "threshold": 0.5,
+      "n": 60,
+      "class_distribution": {
+        "0": 41,
+        "1": 19
+      },
+      "accuracy": 0.7666666666666667,
+      "precision": 0.631578947368421,
+      "recall_sensitivity": 0.631578947368421,
+      "specificity": 0.8292682926829268,
+      "f1": 0.631578947368421,
+      "roc_auc": 0.7933247753530167,
+      "pr_auc": 0.7032831372301211,
+      "confusion_matrix": {
+        "tn": 34,
+        "fp": 7,
+        "fn": 7,
+        "tp": 12
+      }
+    }
+  },
+  "cross_validation": {
+    "folds": 5,
+    "per_fold": [
+      {
+        "roc_auc": 0.8020202020202021,
+        "pr_auc": 0.6510303973441228,
+        "recall_sensitivity": 0.7333333333333333,
+        "f1": 0.5945945945945946
+      },
+      {
+        "roc_auc": 0.8383838383838383,
+        "pr_auc": 0.7316671458776722,
+        "recall_sensitivity": 0.4,
+        "f1": 0.5
+      },
+      {
+        "roc_auc": 0.83203125,
+        "pr_auc": 0.7266310147272319,
+        "recall_sensitivity": 0.6875,
+        "f1": 0.6875
+      },
+      {
+        "roc_auc": 0.74609375,
+        "pr_auc": 0.6739511931721095,
+        "recall_sensitivity": 0.6875,
+        "f1": 0.6666666666666666
+      },
+      {
+        "roc_auc": 0.7270833333333333,
+        "pr_auc": 0.6236893038523473,
+        "recall_sensitivity": 0.4666666666666667,
+        "f1": 0.5
+      }
+    ],
+    "summary": {
+      "roc_auc": {
+        "mean": 0.7891224747474748,
+        "std": 0.04502115620591104
+      },
+      "pr_auc": {
+        "mean": 0.6813938109946969,
+        "std": 0.04214487488391702
+      },
+      "recall_sensitivity": {
+        "mean": 0.595,
+        "std": 0.13471678110432683
+      },
+      "f1": {
+        "mean": 0.5897522522522523,
+        "std": 0.0795045045045045
+      }
+    }
+  },
+  "calibration": {
+    "method": "sigmoid",
+    "validation_brier": {
+      "none": 0.15097767232467335,
+      "sigmoid": 0.14831812013758505,
+      "isotonic": 0.14941685720475462
+    }
+  },
+  "risk_thresholds": {
+    "low_cut": 0.3071001024214751,
+    "high_cut": 0.49569059508938,
+    "policy": "HIGH if score >= 0.4957 (largest validation threshold with specificity >= 0.85); LOW if score < 0.3071 (smallest validation threshold with sensitivity >= 0.85); MODERATE otherwise.",
+    "target_sensitivity": 0.85,
+    "target_specificity": 0.85
+  },
+  "test_metrics": {
+    "threshold": 0.5,
+    "n": 60,
+    "class_distribution": {
+      "0": 41,
+      "1": 19
+    },
+    "accuracy": 0.7333333333333333,
+    "precision": 0.6,
+    "recall_sensitivity": 0.47368421052631576,
+    "specificity": 0.8536585365853658,
+    "f1": 0.5294117647058824,
+    "roc_auc": 0.7894736842105263,
+    "pr_auc": 0.5763430298276032,
+    "confusion_matrix": {
+      "tn": 35,
+      "fp": 6,
+      "fn": 10,
+      "tp": 9
+    },
+    "calibration": {
+      "brier": 0.17382777514130598,
+      "bins": [
+        {
+          "bin": [
+            0.0,
+            0.1
+          ],
+          "count": 5,
+          "mean_predicted": 0.09064279421915088,
+          "observed_frequency": 0.0
+        },
+        {
+          "bin": [
+            0.1,
+            0.2
+          ],
+          "count": 20,
+          "mean_predicted": 0.1382515765839572,
+          "observed_frequency": 0.1
+        },
+        {
+          "bin": [
+            0.2,
+            0.30000000000000004
+          ],
+          "count": 9,
+          "mean_predicted": 0.2432778219243603,
+          "observed_frequency": 0.3333333333333333
+        },
+        {
+          "bin": [
+            0.30000000000000004,
+            0.4
+          ],
+          "count": 5,
+          "mean_predicted": 0.35384812341441985,
+          "observed_frequency": 0.4
+        },
+        {
+          "bin": [
+            0.4,
+            0.5
+          ],
+          "count": 6,
+          "mean_predicted": 0.44223593475431683,
+          "observed_frequency": 0.5
+        },
+        {
+          "bin": [
+            0.5,
+            0.6000000000000001
+          ],
+          "count": 5,
+          "mean_predicted": 0.5367906905923462,
+          "observed_frequency": 0.6
+        },
+        {
+          "bin": [
+            0.6000000000000001,
+            0.7000000000000001
+          ],
+          "count": 5,
+          "mean_predicted": 0.6396723521241281,
+          "observed_frequency": 0.6
+        },
+        {
+          "bin": [
+            0.7000000000000001,
+            0.8
+          ],
+          "count": 5,
+          "mean_predicted": 0.7371096473781303,
+          "observed_frequency": 0.6
+        }
+      ]
+    }
+  },
+  "test_metrics_at_low_threshold_screening": {
+    "threshold": 0.3071001024214751,
+    "n": 60,
+    "class_distribution": {
+      "0": 41,
+      "1": 19
+    },
+    "accuracy": 0.7,
+    "precision": 0.52,
+    "recall_sensitivity": 0.6842105263157895,
+    "specificity": 0.7073170731707317,
+    "f1": 0.5909090909090909,
+    "roc_auc": 0.7894736842105263,
+    "pr_auc": 0.5763430298276032,
+    "confusion_matrix": {
+      "tn": 29,
+      "fp": 12,
+      "fn": 6,
+      "tp": 13
+    }
+  },
+  "test_metrics_at_high_threshold": {
+    "threshold": 0.49569059508938,
+    "n": 60,
+    "class_distribution": {
+      "0": 41,
+      "1": 19
+    },
+    "accuracy": 0.7333333333333333,
+    "precision": 0.6,
+    "recall_sensitivity": 0.47368421052631576,
+    "specificity": 0.8536585365853658,
+    "f1": 0.5294117647058824,
+    "roc_auc": 0.7894736842105263,
+    "pr_auc": 0.5763430298276032,
+    "confusion_matrix": {
+      "tn": 35,
+      "fp": 6,
+      "fn": 10,
+      "tp": 9
+    }
+  },
+  "feature_reference": {
+    "age": {
+      "median": 60.0,
+      "p25": 51.5,
+      "p75": 69.5
+    },
+    "creatinine_phosphokinase": {
+      "median": 253.0,
+      "p25": 117.0,
+      "p75": 582.0
+    },
+    "ejection_fraction": {
+      "median": 38.0,
+      "p25": 30.0,
+      "p75": 45.0
+    },
+    "platelets": {
+      "median": 263358.03,
+      "p25": 212500.0,
+      "p75": 303500.0
+    },
+    "serum_creatinine": {
+      "median": 1.1,
+      "p25": 0.9,
+      "p75": 1.4
+    },
+    "serum_sodium": {
+      "median": 137.0,
+      "p25": 134.0,
+      "p75": 139.0
+    },
+    "anaemia": {
+      "median": 0.0,
+      "p25": 0.0,
+      "p75": 1.0
+    },
+    "diabetes": {
+      "median": 0.0,
+      "p25": 0.0,
+      "p75": 1.0
+    },
+    "high_blood_pressure": {
+      "median": 0.0,
+      "p25": 0.0,
+      "p75": 1.0
+    },
+    "sex": {
+      "median": 1.0,
+      "p25": 0.0,
+      "p75": 1.0
+    },
+    "smoking": {
+      "median": 0.0,
+      "p25": 0.0,
+      "p75": 1.0
+    }
+  },
+  "permutation_importance": [
+    {
+      "feature": "serum_creatinine",
+      "importance": 0.08189987163029527,
+      "std": 0.06673693909607523
+    },
+    {
+      "feature": "age",
+      "importance": 0.07804878048780488,
+      "std": 0.021517152081907007
+    },
+    {
+      "feature": "ejection_fraction",
+      "importance": 0.07663671373555847,
+      "std": 0.03767623498336123
+    },
+    {
+      "feature": "serum_sodium",
+      "importance": 0.009884467265725293,
+      "std": 0.014959890577320934
+    },
+    {
+      "feature": "sex",
+      "importance": 0.00526315789473687,
+      "std": 0.0018558192932992409
+    },
+    {
+      "feature": "creatinine_phosphokinase",
+      "importance": 0.003851091142490415,
+      "std": 0.008358829574377245
+    },
+    {
+      "feature": "high_blood_pressure",
+      "importance": -0.0006418485237483784,
+      "std": 0.007289997876508694
+    },
+    {
+      "feature": "diabetes",
+      "importance": -0.0024390243902438825,
+      "std": 0.0065819993547082305
+    },
+    {
+      "feature": "anaemia",
+      "importance": -0.002567394094993547,
+      "std": 0.005910585074824812
+    },
+    {
+      "feature": "platelets",
+      "importance": -0.0028241335044929317,
+      "std": 0.009923567697092512
+    },
+    {
+      "feature": "smoking",
+      "importance": -0.0033376123234916343,
+      "std": 0.0041872930501412565
+    }
+  ],
+  "artifact": {
+    "path": "models/heart_failure-v1.joblib",
+    "sha256": "53c47a69afd35297a17ed753d2303ed3a33a2523d074e48cf50bbe40857fc67f"
+  },
+  "output_field": "risk_score",
+  "disclaimer": "This is a risk assessment and not a medical diagnosis.",
+  "limitations": "299 patients from one hospital in Faisalabad, Pakistan (2015); target is mortality among people already diagnosed with heart failure, not incidence; `time` column dropped to avoid leakage; very small sample",
+  "ethical_note": "",
+  "notes": "Score is a model output called risk_score; it is a calibrated probability only when calibration.method != 'none'."
+}

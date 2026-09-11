@@ -60,6 +60,14 @@ def predict_one(disease: str, features: dict[str, float]) -> dict[str, Any]:
         },
         "important_features": explain(bundle, features),
         "threshold_policy": bundle.metadata.get("risk_thresholds", {}).get("policy"),
+        # the actual validation-derived cut points behind risk_level, so the UI
+        # can draw a real zone bar instead of inventing round numbers.
+        "risk_thresholds": {
+            "low_cut": bundle.thresholds.get("low_cut"),
+            "high_cut": bundle.thresholds.get("high_cut"),
+        },
+        "decision_threshold": 0.5,
+        "predicted_class": int(score >= 0.5),
         "disclaimer": DISCLAIMER,
     }
 

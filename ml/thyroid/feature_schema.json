@@ -1,0 +1,50 @@
+{
+  "disease": "thyroid",
+  "model_id": "thyroid-v1",
+  "target": "target",
+  "positive_label": "abnormal thyroid function (hyper- or hypothyroid)",
+  "required_features": [
+    "T3_resin",
+    "total_thyroxin",
+    "total_triiodothyronine",
+    "TSH",
+    "TSH_diff_after_TRH"
+  ],
+  "feature_details": {
+    "T3_resin": {
+      "type": "number",
+      "unit": "T3-resin uptake test (%)",
+      "required": true,
+      "min": 65.0,
+      "max": 144.0
+    },
+    "total_thyroxin": {
+      "type": "number",
+      "unit": "total serum thyroxin (T4)",
+      "required": true,
+      "min": 0.5,
+      "max": 25.3
+    },
+    "total_triiodothyronine": {
+      "type": "number",
+      "unit": "total serum triiodothyronine (T3)",
+      "required": true,
+      "min": 0.2,
+      "max": 10.0
+    },
+    "TSH": {
+      "type": "number",
+      "unit": "basal thyroid-stimulating hormone",
+      "required": true,
+      "min": 0.1,
+      "max": 56.4
+    },
+    "TSH_diff_after_TRH": {
+      "type": "number",
+      "unit": "max absolute TSH change after TRH injection",
+      "required": true,
+      "min": -0.7,
+      "max": 56.3
+    }
+  }
+}

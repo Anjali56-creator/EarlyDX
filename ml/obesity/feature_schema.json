@@ -1,0 +1,145 @@
+{
+  "disease": "obesity",
+  "model_id": "obesity-v1",
+  "target": "target",
+  "positive_label": "obesity (NObeyesdad in Obesity_Type_I/II/III)",
+  "required_features": [
+    "Age",
+    "FCVC",
+    "NCP",
+    "CH2O",
+    "FAF",
+    "TUE",
+    "Gender",
+    "family_history_with_overweight",
+    "FAVC",
+    "CAEC",
+    "SMOKE",
+    "SCC",
+    "CALC",
+    "MTRANS"
+  ],
+  "feature_details": {
+    "Age": {
+      "type": "number",
+      "unit": "years",
+      "required": true,
+      "min": 14.0,
+      "max": 61.0
+    },
+    "FCVC": {
+      "type": "number",
+      "unit": "frequency of vegetable consumption (1-3)",
+      "required": true,
+      "min": 1.0,
+      "max": 3.0
+    },
+    "NCP": {
+      "type": "number",
+      "unit": "number of main meals per day",
+      "required": true,
+      "min": 1.0,
+      "max": 4.0
+    },
+    "CH2O": {
+      "type": "number",
+      "unit": "daily water intake (litres, 1-3)",
+      "required": true,
+      "min": 1.0,
+      "max": 3.0
+    },
+    "FAF": {
+      "type": "number",
+      "unit": "physical activity frequency (days/week, 0-3)",
+      "required": true,
+      "min": 0.0,
+      "max": 3.0
+    },
+    "TUE": {
+      "type": "number",
+      "unit": "time using technology devices (hours, 0-2)",
+      "required": true,
+      "min": 0.0,
+      "max": 2.0
+    },
+    "Gender": {
+      "type": "categorical",
+      "unit": "",
+      "required": true,
+      "options": [
+        "Female",
+        "Male"
+      ]
+    },
+    "family_history_with_overweight": {
+      "type": "categorical",
+      "unit": "",
+      "required": true,
+      "options": [
+        "no",
+        "yes"
+      ]
+    },
+    "FAVC": {
+      "type": "categorical",
+      "unit": "",
+      "required": true,
+      "options": [
+        "no",
+        "yes"
+      ]
+    },
+    "CAEC": {
+      "type": "categorical",
+      "unit": "",
+      "required": true,
+      "options": [
+        "Always",
+        "Frequently",
+        "Sometimes",
+        "no"
+      ]
+    },
+    "SMOKE": {
+      "type": "categorical",
+      "unit": "",
+      "required": true,
+      "options": [
+        "no",
+        "yes"
+      ]
+    },
+    "SCC": {
+      "type": "categorical",
+      "unit": "",
+      "required": true,
+      "options": [
+        "no",
+        "yes"
+      ]
+    },
+    "CALC": {
+      "type": "categorical",
+      "unit": "",
+      "required": true,
+      "options": [
+        "Always",
+        "Frequently",
+        "Sometimes",
+        "no"
+      ]
+    },
+    "MTRANS": {
+      "type": "categorical",
+      "unit": "",
+      "required": true,
+      "options": [
+        "Automobile",
+        "Bike",
+        "Motorbike",
+        "Public_Transportation",
+        "Walking"
+      ]
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "disease": "maternal_health",
+  "model_id": "maternal_health-v1",
+  "target": "target",
+  "positive_label": "high risk during pregnancy (RiskLevel = 'high risk')",
+  "required_features": [
+    "Age",
+    "SystolicBP",
+    "DiastolicBP",
+    "BS",
+    "BodyTemp",
+    "HeartRate"
+  ],
+  "feature_details": {
+    "Age": {
+      "type": "number",
+      "unit": "years",
+      "required": true,
+      "min": 10.0,
+      "max": 70.0
+    },
+    "SystolicBP": {
+      "type": "number",
+      "unit": "mm Hg",
+      "required": true,
+      "min": 70.0,
+      "max": 160.0
+    },
+    "DiastolicBP": {
+      "type": "number",
+      "unit": "mm Hg",
+      "required": true,
+      "min": 49.0,
+      "max": 100.0
+    },
+    "BS": {
+      "type": "number",
+      "unit": "mmol/L (blood glucose)",
+      "required": true,
+      "min": 6.0,
+      "max": 19.0
+    },
+    "BodyTemp": {
+      "type": "number",
+      "unit": "degrees Fahrenheit",
+      "required": true,
+      "min": 98.0,
+      "max": 103.0
+    },
+    "HeartRate": {
+      "type": "number",
+      "unit": "bpm (resting)",
+      "required": true,
+      "min": 7.0,
+      "max": 90.0
+    }
+  }
+}

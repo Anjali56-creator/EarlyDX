@@ -1,0 +1,490 @@
+{
+  "model_id": "parkinsons-v1",
+  "disease": "parkinsons",
+  "display_name": "Parkinson's Disease",
+  "version": "v1",
+  "algorithm": "GradientBoostingClassifier",
+  "baseline_algorithm": "LogisticRegression",
+  "selection_rule": "prefer LogisticRegression; a candidate is chosen only if its validation ROC-AUC exceeds the baseline by >= 0.01",
+  "random_state": 42,
+  "training_date": "2026-09-10",
+  "dataset": {
+    "name": "UCI Oxford Parkinson's Disease Detection Dataset",
+    "registry_key": "parkinsons"
+  },
+  "split": {
+    "scheme": "grouped",
+    "sizes": {
+      "train": 110,
+      "val": 42,
+      "test": 43
+    }
+  },
+  "target_positive_rate": 0.7538461538461538,
+  "validation_metrics_by_candidate": {
+    "LogisticRegression": {
+      "threshold": 0.5,
+      "n": 42,
+      "class_distribution": {
+        "0": 12,
+        "1": 30
+      },
+      "accuracy": 0.6904761904761905,
+      "precision": 0.7931034482758621,
+      "recall_sensitivity": 0.7666666666666667,
+      "specificity": 0.5,
+      "f1": 0.7796610169491526,
+      "roc_auc": 0.6777777777777778,
+      "pr_auc": 0.8609397145159213,
+      "confusion_matrix": {
+        "tn": 6,
+        "fp": 6,
+        "fn": 7,
+        "tp": 23
+      }
+    },
+    "RandomForestClassifier": {
+      "threshold": 0.5,
+      "n": 42,
+      "class_distribution": {
+        "0": 12,
+        "1": 30
+      },
+      "accuracy": 0.8571428571428571,
+      "precision": 0.8333333333333334,
+      "recall_sensitivity": 1.0,
+      "specificity": 0.5,
+      "f1": 0.9090909090909091,
+      "roc_auc": 0.5666666666666667,
+      "pr_auc": 0.6933740681534907,
+      "confusion_matrix": {
+        "tn": 6,
+        "fp": 6,
+        "fn": 0,
+        "tp": 30
+      }
+    },
+    "GradientBoostingClassifier": {
+      "threshold": 0.5,
+      "n": 42,
+      "class_distribution": {
+        "0": 12,
+        "1": 30
+      },
+      "accuracy": 0.8333333333333334,
+      "precision": 0.8285714285714286,
+      "recall_sensitivity": 0.9666666666666667,
+      "specificity": 0.5,
+      "f1": 0.8923076923076924,
+      "roc_auc": 0.7458333333333333,
+      "pr_auc": 0.8296075837742505,
+      "confusion_matrix": {
+        "tn": 6,
+        "fp": 6,
+        "fn": 1,
+        "tp": 29
+      }
+    }
+  },
+  "cross_validation": {
+    "folds_requested": 5,
+    "folds_scored": 4,
+    "folds_skipped_single_class": 0,
+    "per_fold": [
+      {
+        "roc_auc": 0.4913194444444444,
+        "pr_auc": 0.664272030651341,
+        "recall_sensitivity": 0.5833333333333334,
+        "f1": 0.6222222222222222
+      },
+      {
+        "roc_auc": 0.9999999999999999,
+        "pr_auc": 1.0,
+        "recall_sensitivity": 1.0,
+        "f1": 0.9846153846153847
+      },
+      {
+        "roc_auc": 0.41203703703703703,
+        "pr_auc": 0.8361959254816635,
+        "recall_sensitivity": 0.8611111111111112,
+        "f1": 0.8493150684931506
+      },
+      {
+        "roc_auc": 0.9479166666666666,
+        "pr_auc": 0.9769056391637037,
+        "recall_sensitivity": 1.0,
+        "f1": 0.8727272727272727
+      }
+    ],
+    "summary": {
+      "roc_auc": {
+        "mean": 0.712818287037037,
+        "std": 0.2632848656808057
+      },
+      "pr_auc": {
+        "mean": 0.869343398824177,
+        "std": 0.13397182913858016
+      },
+      "recall_sensitivity": {
+        "mean": 0.8611111111111112,
+        "std": 0.17010345435994292
+      },
+      "f1": {
+        "mean": 0.8322199870145075,
+        "std": 0.1315831490296748
+      }
+    }
+  },
+  "calibration": {
+    "method": "sigmoid",
+    "validation_brier": {
+      "none": 0.16666234643061012,
+      "sigmoid": 0.1469342256032111,
+      "isotonic": 0.16398439353772054
+    }
+  },
+  "risk_thresholds": {
+    "low_cut": 0.7412186463328958,
+    "high_cut": 0.9146351464983823,
+    "policy": "HIGH if score >= 0.9146 (largest validation threshold with specificity >= 0.85); LOW if score < 0.7412 (smallest validation threshold with sensitivity >= 0.85); MODERATE otherwise.",
+    "target_sensitivity": 0.85,
+    "target_specificity": 0.85
+  },
+  "test_metrics": {
+    "threshold": 0.5,
+    "n": 43,
+    "class_distribution": {
+      "0": 12,
+      "1": 31
+    },
+    "accuracy": 0.7209302325581395,
+    "precision": 0.7209302325581395,
+    "recall_sensitivity": 1.0,
+    "specificity": 0.0,
+    "f1": 0.8378378378378378,
+    "roc_auc": 0.5725806451612903,
+    "pr_auc": 0.8225150206637228,
+    "confusion_matrix": {
+      "tn": 0,
+      "fp": 12,
+      "fn": 0,
+      "tp": 31
+    },
+    "calibration": {
+      "brier": 0.2138265199804988,
+      "bins": [
+        {
+          "bin": [
+            0.6000000000000001,
+            0.7000000000000001
+          ],
+          "count": 6,
+          "mean_predicted": 0.6463914087927457,
+          "observed_frequency": 0.6666666666666666
+        },
+        {
+          "bin": [
+            0.7000000000000001,
+            0.8
+          ],
+          "count": 8,
+          "mean_predicted": 0.7534697000867232,
+          "observed_frequency": 0.75
+        },
+        {
+          "bin": [
+            0.8,
+            0.9
+          ],
+          "count": 16,
+          "mean_predicted": 0.8545680832603406,
+          "observed_frequency": 0.625
+        },
+        {
+          "bin": [
+            0.9,
+            1.0
+          ],
+          "count": 13,
+          "mean_predicted": 0.9056721065742666,
+          "observed_frequency": 0.8461538461538461
+        }
+      ]
+    }
+  },
+  "test_metrics_at_low_threshold_screening": {
+    "threshold": 0.7412186463328958,
+    "n": 43,
+    "class_distribution": {
+      "0": 12,
+      "1": 31
+    },
+    "accuracy": 0.6511627906976745,
+    "precision": 0.7352941176470589,
+    "recall_sensitivity": 0.8064516129032258,
+    "specificity": 0.25,
+    "f1": 0.7692307692307693,
+    "roc_auc": 0.5725806451612903,
+    "pr_auc": 0.8225150206637228,
+    "confusion_matrix": {
+      "tn": 3,
+      "fp": 9,
+      "fn": 6,
+      "tp": 25
+    }
+  },
+  "test_metrics_at_high_threshold": {
+    "threshold": 0.9146351464983823,
+    "n": 43,
+    "class_distribution": {
+      "0": 12,
+      "1": 31
+    },
+    "accuracy": 0.27906976744186046,
+    "precision": 0.0,
+    "recall_sensitivity": 0.0,
+    "specificity": 1.0,
+    "f1": 0.0,
+    "roc_auc": 0.5725806451612903,
+    "pr_auc": 0.8225150206637228,
+    "confusion_matrix": {
+      "tn": 12,
+      "fp": 0,
+      "fn": 31,
+      "tp": 0
+    }
+  },
+  "feature_reference": {
+    "MDVP:Fo(Hz)": {
+      "median": 149.981,
+      "p25": 117.93975,
+      "p75": 197.19925
+    },
+    "MDVP:Fhi(Hz)": {
+      "median": 195.822,
+      "p25": 134.00025,
+      "p75": 231.06975
+    },
+    "MDVP:Flo(Hz)": {
+      "median": 97.535,
+      "p25": 80.99475000000001,
+      "p75": 115.16175
+    },
+    "MDVP:Jitter(%)": {
+      "median": 0.0050349999999999995,
+      "p25": 0.0035125,
+      "p75": 0.0072025
+    },
+    "MDVP:Jitter(Abs)": {
+      "median": 3.5000000000000004e-05,
+      "p25": 2e-05,
+      "p75": 5e-05
+    },
+    "MDVP:RAP": {
+      "median": 0.0026550000000000002,
+      "p25": 0.00169,
+      "p75": 0.003895
+    },
+    "MDVP:PPQ": {
+      "median": 0.002835,
+      "p25": 0.00194,
+      "p75": 0.0039
+    },
+    "Jitter:DDP": {
+      "median": 0.007965,
+      "p25": 0.00507,
+      "p75": 0.011689999999999999
+    },
+    "MDVP:Shimmer": {
+      "median": 0.023254999999999998,
+      "p25": 0.01662,
+      "p75": 0.038205
+    },
+    "MDVP:Shimmer(dB)": {
+      "median": 0.222,
+      "p25": 0.15175,
+      "p75": 0.35275
+    },
+    "Shimmer:APQ3": {
+      "median": 0.012815,
+      "p25": 0.008425,
+      "p75": 0.0190625
+    },
+    "Shimmer:APQ5": {
+      "median": 0.0137,
+      "p25": 0.009757499999999999,
+      "p75": 0.0218825
+    },
+    "MDVP:APQ": {
+      "median": 0.018125,
+      "p25": 0.013055,
+      "p75": 0.029545
+    },
+    "Shimmer:DDA": {
+      "median": 0.038435,
+      "p25": 0.025285000000000002,
+      "p75": 0.0571925
+    },
+    "NHR": {
+      "median": 0.01345,
+      "p25": 0.0061725,
+      "p75": 0.0266
+    },
+    "HNR": {
+      "median": 21.818,
+      "p25": 19.0825,
+      "p75": 25.23975
+    },
+    "RPDE": {
+      "median": 0.4904415,
+      "p25": 0.42979225,
+      "p75": 0.6002467499999999
+    },
+    "DFA": {
+      "median": 0.7195214999999999,
+      "p25": 0.665917,
+      "p75": 0.74396875
+    },
+    "spread1": {
+      "median": -5.634449,
+      "p25": -6.33437725,
+      "p75": -5.127827
+    },
+    "spread2": {
+      "median": 0.2207535,
+      "p25": 0.17305675,
+      "p75": 0.28047275
+    },
+    "D2": {
+      "median": 2.4064335,
+      "p25": 2.13421075,
+      "p75": 2.6411675
+    },
+    "PPE": {
+      "median": 0.2045675,
+      "p25": 0.14395,
+      "p75": 0.24971225
+    }
+  },
+  "permutation_importance": [
+    {
+      "feature": "PPE",
+      "importance": 0.11774193548387088,
+      "std": 0.018499624230199192
+    },
+    {
+      "feature": "spread2",
+      "importance": 0.05779569892473113,
+      "std": 0.025424196271291673
+    },
+    {
+      "feature": "MDVP:Jitter(%)",
+      "importance": 0.05134408602150533,
+      "std": 0.02414720770999447
+    },
+    {
+      "feature": "spread1",
+      "importance": 0.04301075268817199,
+      "std": 0.01908412833257941
+    },
+    {
+      "feature": "MDVP:Fhi(Hz)",
+      "importance": 0.03655913978494617,
+      "std": 0.035218131688521115
+    },
+    {
+      "feature": "MDVP:Fo(Hz)",
+      "importance": 0.03575268817204297,
+      "std": 0.02677532709091578
+    },
+    {
+      "feature": "D2",
+      "importance": 0.03440860215053757,
+      "std": 0.024602282126123785
+    },
+    {
+      "feature": "MDVP:APQ",
+      "importance": 0.01989247311827952,
+      "std": 0.026234135266141625
+    },
+    {
+      "feature": "NHR",
+      "importance": 0.002150537634408545,
+      "std": 0.008899432987767103
+    },
+    {
+      "feature": "Jitter:DDP",
+      "importance": 0.00161290322580645,
+      "std": 0.004199058965541208
+    },
+    {
+      "feature": "MDVP:RAP",
+      "importance": 0.001612903225806439,
+      "std": 0.005535285022036036
+    },
+    {
+      "feature": "Shimmer:APQ5",
+      "importance": 0.001612903225806417,
+      "std": 0.002150537634408584
+    },
+    {
+      "feature": "MDVP:Flo(Hz)",
+      "importance": 0.0010752688172042779,
+      "std": 0.001783131607717935
+    },
+    {
+      "feature": "MDVP:Shimmer(dB)",
+      "importance": 0.0005376344086021501,
+      "std": 0.0010752688172043002
+    },
+    {
+      "feature": "DFA",
+      "importance": 0.0005376344086020946,
+      "std": 0.004129648251542295
+    },
+    {
+      "feature": "Shimmer:APQ3",
+      "importance": 0.0002688172043010528,
+      "std": 0.002232963404010209
+    },
+    {
+      "feature": "MDVP:PPQ",
+      "importance": 0.0,
+      "std": 0.0
+    },
+    {
+      "feature": "Shimmer:DDA",
+      "importance": 0.0,
+      "std": 0.0
+    },
+    {
+      "feature": "MDVP:Shimmer",
+      "importance": -0.00026881720430110834,
+      "std": 0.0022329634040102026
+    },
+    {
+      "feature": "MDVP:Jitter(Abs)",
+      "importance": -0.004301075268817245,
+      "std": 0.00526771987695311
+    },
+    {
+      "feature": "HNR",
+      "importance": -0.013978494623655968,
+      "std": 0.013905932426212422
+    },
+    {
+      "feature": "RPDE",
+      "importance": -0.14247311827957,
+      "std": 0.04914284360260387
+    }
+  ],
+  "artifact": {
+    "path": "models/parkinsons-v1.joblib",
+    "sha256": "f4477fc765743ea0de650018ed9c87e209a8a64ea30ccc80d07d6f55f97492f6"
+  },
+  "output_field": "risk_score",
+  "disclaimer": "This is a risk assessment and not a medical diagnosis.",
+  "limitations": "only 31 subjects (23 with Parkinson's); inputs are voice-signal features, not user-enterable; split and CV are grouped by subject; tiny sample so metrics have wide confidence intervals",
+  "ethical_note": "",
+  "notes": "Score is a model output called risk_score; it is a calibrated probability only when calibration.method != 'none'."
+}

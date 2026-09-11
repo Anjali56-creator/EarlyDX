@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { api } from "../api/client";
 import type { DatasetEntry } from "../types";
 
+function isKnown(v: string | undefined | null): boolean {
+  return !!v && v.toLowerCase() !== "unknown";
+}
+
 export function Datasets() {
   const [datasets, setDatasets] = useState<DatasetEntry[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -17,36 +21,55 @@ export function Datasets() {
       <h1>Datasets</h1>
       <p className="sub">
         Every model is trained on a real public dataset. Values here are measured, not assumed;
-        "unknown" means not yet verified.
+        "unknown" means not yet verified — it is never replaced with a guess.
       </p>
-      <table>
-        <thead>
-          <tr><th>Disease</th><th>Dataset</th><th>Source</th><th>Licence</th><th>Records</th><th>Status</th></tr>
-        </thead>
-        <tbody>
-          {datasets.map((d) => (
-            <tr key={d.disease}>
-              <td>{d.disease}</td>
-              <td>
-                {d.dataset_name}
-                {d.limitations && d.limitations !== "unknown" && (
-                  <div className="muted">Limitations: {d.limitations}</div>
-                )}
-              </td>
-              <td className="muted">
-                {d.source_url && d.source_url !== "unknown" ? (
-                  <a href={d.source_url} target="_blank" rel="noreferrer">{d.source}</a>
-                ) : (
-                  d.source
-                )}
-              </td>
-              <td className="muted">{d.license}</td>
-              <td>{d.records || "—"}</td>
-              <td><span className={`pill ${d.status === "verified" ? "ok" : "no"}`}>{d.status}</span></td>
+      <div className="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Disease</th>
+              <th>Dataset</th>
+              <th>Records</th>
+              <th>Source</th>
+              <th>License</th>
+              <th>Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {datasets.map((d) => (
+              <tr key={d.disease}>
+                <td>{d.disease}</td>
+                <td>{d.dataset_name}</td>
+                <td>{d.records || "—"}</td>
+                <td className={isKnown(d.source) ? "" : "muted"}>
+                  {isKnown(d.source_url) ? (
+                    <a href={d.source_url} target="_blank" rel="noreferrer">{d.source}</a>
+                  ) : isKnown(d.source) ? (
+                    d.source
+                  ) : (
+                    <em>Unknown</em>
+                  )}
+                </td>
+                <td className={isKnown(d.license) ? "" : "muted"}>
+                  {isKnown(d.license) ? d.license : <em>Unknown</em>}
+                </td>
+                <td><span className={`pill ${d.status === "verified" ? "ok" : "no"}`}>{d.status}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="card-list">
+        {datasets.map((d) => (
+          isKnown(d.limitations) && (
+            <div className="card limitations-card" key={d.disease}>
+              <div className="k">{d.disease} — limitations</div>
+              <p className="muted" style={{ margin: "6px 0 0" }}>{d.limitations}</p>
+            </div>
+          )
+        ))}
+      </div>
     </>
   );
 }

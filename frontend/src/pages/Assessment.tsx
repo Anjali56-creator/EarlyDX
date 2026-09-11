@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, ApiError } from "../api/client";
 import type { DiseaseInfo, FeatureSchema } from "../types";
+import { humanizeLabel, humanizeOption } from "../utils/format";
 
 export function Assessment() {
   const nav = useNavigate();
@@ -9,6 +10,7 @@ export function Assessment() {
   const [selected, setSelected] = useState<string>("");
   const [schema, setSchema] = useState<FeatureSchema | null>(null);
   const [values, setValues] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -23,6 +25,7 @@ export function Assessment() {
   useEffect(() => {
     if (!selected) return;
     setSchema(null);
+    setTouched({});
     setError(null);
     api.schema(selected)
       .then((s) => {
@@ -35,16 +38,41 @@ export function Assessment() {
   const available = useMemo(() => diseases.filter((d) => d.model_available), [diseases]);
   const unavailable = useMemo(() => diseases.filter((d) => !d.model_available), [diseases]);
 
-  const complete = schema?.required_features.every((f) => values[f] !== "" && !Number.isNaN(Number(values[f])));
+  function fieldInvalid(f: string): boolean {
+    if (!schema) return false;
+    const d = schema.feature_details[f];
+    const v = values[f];
+    if (v === "" || v == null) return true;
+    if (d.type === "categorical") return false;
+    if (Number.isNaN(Number(v))) return true;
+    const n = Number(v);
+    // 0 is an explicit "not measured" sentinel for this feature: the model's
+    // own preprocessing treats it as missing and imputes it, so it is valid
+    // input even though it falls outside [min, max]. Matches the backend's
+    // validation in backend/app/schemas/__init__.py.
+    if (d.zero_is_missing && n === 0) return false;
+    if (d.min != null && n < d.min) return true;
+    if (d.max != null && n > d.max) return true;
+    return false;
+  }
+
+  const complete = schema?.required_features.every((f) => !fieldInvalid(f)) ?? false;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!schema) return;
+    if (!complete) {
+      setTouched(Object.fromEntries(schema.required_features.map((f) => [f, true])));
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
       const features = Object.fromEntries(
-        schema.required_features.map((f) => [f, Number(values[f])]),
+        schema.required_features.map((f) => [
+          f,
+          schema.feature_details[f].type === "categorical" ? values[f] : Number(values[f]),
+        ]),
       );
       const result = await api.predict(schema.disease, features);
       sessionStorage.setItem("earlydx:lastResult", JSON.stringify(result));
@@ -66,44 +94,91 @@ export function Assessment() {
         substitute for a clinician.
       </div>
 
-      <div className="field">
-        <label htmlFor="disease">Condition</label>
-        <select id="disease" value={selected} onChange={(e) => setSelected(e.target.value)}>
-          {available.map((d) => (
-            <option key={d.key} value={d.key}>{d.display_name}</option>
-          ))}
-        </select>
+      <div className="selector-card">
+        <div className="field" style={{ marginBottom: 0 }}>
+          <label htmlFor="disease">Condition</label>
+          <select id="disease" value={selected} onChange={(e) => setSelected(e.target.value)}>
+            {available.map((d) => (
+              <option key={d.key} value={d.key}>{d.display_name}</option>
+            ))}
+          </select>
+        </div>
+        {selected && schema && (
+          <span className="pill ok" style={{ marginTop: 8, display: "inline-block" }}>Model available</span>
+        )}
         {unavailable.length > 0 && (
-          <p className="muted">
-            No model yet: {unavailable.map((d) => d.display_name).join(", ")}.
-          </p>
+          <div className="status-note">
+            No trained model available: {unavailable.map((d) => d.display_name).join(", ")}.
+          </div>
         )}
       </div>
 
       {schema && (
-        <form onSubmit={submit}>
-          {schema.required_features.map((f) => {
-            const d = schema.feature_details[f];
-            return (
-              <div className="field" key={f}>
-                <label htmlFor={f}>
-                  {f} <span className="unit">({d.unit})</span>
-                </label>
-                <input
-                  id={f}
-                  name={f}
-                  type="number"
-                  step="any"
-                  min={d.min}
-                  max={d.max}
-                  value={values[f] ?? ""}
-                  onChange={(e) => setValues((v) => ({ ...v, [f]: e.target.value }))}
-                />
-              </div>
-            );
-          })}
-          <button type="submit" disabled={!complete || busy}>
-            {busy ? "Scoring…" : "Submit assessment"}
+        <form onSubmit={submit} noValidate>
+          <div className="form-grid">
+            {schema.required_features.map((f) => {
+              const d = schema.feature_details[f];
+              const invalid = touched[f] && fieldInvalid(f);
+              return (
+                <div className="field" key={f}>
+                  <label htmlFor={f}>
+                    {humanizeLabel(f)} <span className="req-mark" aria-hidden="true">*</span>
+                  </label>
+                  {d.unit && <div className="field-desc">{d.unit}</div>}
+                  {d.zero_is_missing && (
+                    <div className="field-desc">
+                      Enter 0 if this was not measured — the model treats 0 as missing and imputes it.
+                    </div>
+                  )}
+                  {d.type === "categorical" ? (
+                    <select
+                      id={f}
+                      name={f}
+                      required
+                      aria-invalid={invalid}
+                      value={values[f] ?? ""}
+                      onChange={(e) => setValues((v) => ({ ...v, [f]: e.target.value }))}
+                      onBlur={() => setTouched((t) => ({ ...t, [f]: true }))}
+                    >
+                      <option value="" disabled>
+                        select…
+                      </option>
+                      {(d.options ?? []).map((o) => (
+                        <option key={o} value={o}>
+                          {humanizeOption(o)}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      id={f}
+                      name={f}
+                      type="number"
+                      step="any"
+                      min={d.zero_is_missing ? 0 : d.min}
+                      max={d.max}
+                      required
+                      aria-invalid={invalid}
+                      value={values[f] ?? ""}
+                      onChange={(e) => setValues((v) => ({ ...v, [f]: e.target.value }))}
+                      onBlur={() => setTouched((t) => ({ ...t, [f]: true }))}
+                    />
+                  )}
+                  {invalid && (
+                    <div className="field-error">
+                      {values[f] === ""
+                        ? "This value is required."
+                        : d.zero_is_missing
+                          ? `Enter 0 (not measured), or a value between ${d.min} and ${d.max}.`
+                          : `Enter a value between ${d.min} and ${d.max}.`}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <button type="submit" disabled={busy}>
+            {busy ? "Running assessment…" : "Submit Assessment"}
           </button>
           {error && <p className="err">{error}</p>}
         </form>

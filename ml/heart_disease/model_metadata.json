@@ -1,0 +1,450 @@
+{
+  "model_id": "heart_disease-v1",
+  "disease": "heart_disease",
+  "display_name": "Heart Disease",
+  "version": "v1",
+  "algorithm": "LogisticRegression",
+  "baseline_algorithm": "LogisticRegression",
+  "selection_rule": "prefer LogisticRegression; a candidate is chosen only if its validation ROC-AUC exceeds the baseline by >= 0.01",
+  "random_state": 42,
+  "training_date": "2026-09-10",
+  "dataset": {
+    "name": "UCI Heart Disease (Cleveland)",
+    "registry_key": "heart_disease"
+  },
+  "split": {
+    "scheme": "stratified",
+    "sizes": {
+      "train": 181,
+      "val": 61,
+      "test": 61
+    }
+  },
+  "target_positive_rate": 0.45874587458745875,
+  "validation_metrics_by_candidate": {
+    "LogisticRegression": {
+      "threshold": 0.5,
+      "n": 61,
+      "class_distribution": {
+        "0": 33,
+        "1": 28
+      },
+      "accuracy": 0.819672131147541,
+      "precision": 0.7931034482758621,
+      "recall_sensitivity": 0.8214285714285714,
+      "specificity": 0.8181818181818182,
+      "f1": 0.8070175438596491,
+      "roc_auc": 0.9372294372294372,
+      "pr_auc": 0.9404070255129359,
+      "confusion_matrix": {
+        "tn": 27,
+        "fp": 6,
+        "fn": 5,
+        "tp": 23
+      }
+    },
+    "RandomForestClassifier": {
+      "threshold": 0.5,
+      "n": 61,
+      "class_distribution": {
+        "0": 33,
+        "1": 28
+      },
+      "accuracy": 0.7868852459016393,
+      "precision": 0.7419354838709677,
+      "recall_sensitivity": 0.8214285714285714,
+      "specificity": 0.7575757575757576,
+      "f1": 0.7796610169491526,
+      "roc_auc": 0.9015151515151515,
+      "pr_auc": 0.9099608772379925,
+      "confusion_matrix": {
+        "tn": 25,
+        "fp": 8,
+        "fn": 5,
+        "tp": 23
+      }
+    },
+    "GradientBoostingClassifier": {
+      "threshold": 0.5,
+      "n": 61,
+      "class_distribution": {
+        "0": 33,
+        "1": 28
+      },
+      "accuracy": 0.819672131147541,
+      "precision": 0.7931034482758621,
+      "recall_sensitivity": 0.8214285714285714,
+      "specificity": 0.8181818181818182,
+      "f1": 0.8070175438596491,
+      "roc_auc": 0.9101731601731602,
+      "pr_auc": 0.906888579401956,
+      "confusion_matrix": {
+        "tn": 27,
+        "fp": 6,
+        "fn": 5,
+        "tp": 23
+      }
+    }
+  },
+  "cross_validation": {
+    "folds": 5,
+    "per_fold": [
+      {
+        "roc_auc": 0.9163879598662208,
+        "pr_auc": 0.9161823931964597,
+        "recall_sensitivity": 0.9130434782608695,
+        "f1": 0.8571428571428571
+      },
+      {
+        "roc_auc": 0.9326599326599327,
+        "pr_auc": 0.9421296169182003,
+        "recall_sensitivity": 0.7727272727272727,
+        "f1": 0.85
+      },
+      {
+        "roc_auc": 0.8968531468531469,
+        "pr_auc": 0.8929646983888402,
+        "recall_sensitivity": 0.7727272727272727,
+        "f1": 0.8095238095238095
+      },
+      {
+        "roc_auc": 0.9090909090909091,
+        "pr_auc": 0.8827932556245182,
+        "recall_sensitivity": 0.8181818181818182,
+        "f1": 0.8
+      },
+      {
+        "roc_auc": 0.8793706293706294,
+        "pr_auc": 0.8591114518631757,
+        "recall_sensitivity": 0.8181818181818182,
+        "f1": 0.8372093023255814
+      }
+    ],
+    "summary": {
+      "roc_auc": {
+        "mean": 0.9068725155681678,
+        "std": 0.017984422838365623
+      },
+      "pr_auc": {
+        "mean": 0.8986362831982388,
+        "std": 0.028442632589697685
+      },
+      "recall_sensitivity": {
+        "mean": 0.8189723320158103,
+        "std": 0.05124029936935088
+      },
+      "f1": {
+        "mean": 0.8307751937984496,
+        "std": 0.022382933155378176
+      }
+    }
+  },
+  "calibration": {
+    "method": "none",
+    "validation_brier": {
+      "none": 0.10857046286128817,
+      "sigmoid": 0.10962355053045834,
+      "isotonic": 0.11092986300945705
+    }
+  },
+  "risk_thresholds": {
+    "low_cut": 0.4965703059940343,
+    "high_cut": 0.6009882057572785,
+    "policy": "HIGH if score >= 0.6010 (largest validation threshold with specificity >= 0.85); LOW if score < 0.4966 (smallest validation threshold with sensitivity >= 0.85); MODERATE otherwise.",
+    "target_sensitivity": 0.85,
+    "target_specificity": 0.85
+  },
+  "test_metrics": {
+    "threshold": 0.5,
+    "n": 61,
+    "class_distribution": {
+      "0": 33,
+      "1": 28
+    },
+    "accuracy": 0.8688524590163934,
+    "precision": 0.8125,
+    "recall_sensitivity": 0.9285714285714286,
+    "specificity": 0.8181818181818182,
+    "f1": 0.8666666666666667,
+    "roc_auc": 0.9577922077922079,
+    "pr_auc": 0.9407883021856493,
+    "confusion_matrix": {
+      "tn": 27,
+      "fp": 6,
+      "fn": 2,
+      "tp": 26
+    },
+    "calibration": {
+      "brier": 0.0895216772652638,
+      "bins": [
+        {
+          "bin": [
+            0.0,
+            0.1
+          ],
+          "count": 15,
+          "mean_predicted": 0.04079300277517915,
+          "observed_frequency": 0.0
+        },
+        {
+          "bin": [
+            0.1,
+            0.2
+          ],
+          "count": 5,
+          "mean_predicted": 0.14675583800617908,
+          "observed_frequency": 0.0
+        },
+        {
+          "bin": [
+            0.2,
+            0.30000000000000004
+          ],
+          "count": 4,
+          "mean_predicted": 0.2654377118667198,
+          "observed_frequency": 0.25
+        },
+        {
+          "bin": [
+            0.30000000000000004,
+            0.4
+          ],
+          "count": 2,
+          "mean_predicted": 0.37547166173578655,
+          "observed_frequency": 0.0
+        },
+        {
+          "bin": [
+            0.4,
+            0.5
+          ],
+          "count": 3,
+          "mean_predicted": 0.4623062239769063,
+          "observed_frequency": 0.3333333333333333
+        },
+        {
+          "bin": [
+            0.5,
+            0.6000000000000001
+          ],
+          "count": 2,
+          "mean_predicted": 0.5762568773960768,
+          "observed_frequency": 0.5
+        },
+        {
+          "bin": [
+            0.6000000000000001,
+            0.7000000000000001
+          ],
+          "count": 2,
+          "mean_predicted": 0.6169682618884411,
+          "observed_frequency": 0.0
+        },
+        {
+          "bin": [
+            0.7000000000000001,
+            0.8
+          ],
+          "count": 4,
+          "mean_predicted": 0.7634909165311147,
+          "observed_frequency": 0.5
+        },
+        {
+          "bin": [
+            0.8,
+            0.9
+          ],
+          "count": 6,
+          "mean_predicted": 0.8309627041998476,
+          "observed_frequency": 1.0
+        },
+        {
+          "bin": [
+            0.9,
+            1.0
+          ],
+          "count": 18,
+          "mean_predicted": 0.9743493502173669,
+          "observed_frequency": 0.9444444444444444
+        }
+      ]
+    }
+  },
+  "test_metrics_at_low_threshold_screening": {
+    "threshold": 0.4965703059940343,
+    "n": 61,
+    "class_distribution": {
+      "0": 33,
+      "1": 28
+    },
+    "accuracy": 0.8688524590163934,
+    "precision": 0.8125,
+    "recall_sensitivity": 0.9285714285714286,
+    "specificity": 0.8181818181818182,
+    "f1": 0.8666666666666667,
+    "roc_auc": 0.9577922077922079,
+    "pr_auc": 0.9407883021856493,
+    "confusion_matrix": {
+      "tn": 27,
+      "fp": 6,
+      "fn": 2,
+      "tp": 26
+    }
+  },
+  "test_metrics_at_high_threshold": {
+    "threshold": 0.6009882057572785,
+    "n": 61,
+    "class_distribution": {
+      "0": 33,
+      "1": 28
+    },
+    "accuracy": 0.8688524590163934,
+    "precision": 0.8333333333333334,
+    "recall_sensitivity": 0.8928571428571429,
+    "specificity": 0.8484848484848485,
+    "f1": 0.8620689655172413,
+    "roc_auc": 0.9577922077922079,
+    "pr_auc": 0.9407883021856493,
+    "confusion_matrix": {
+      "tn": 28,
+      "fp": 5,
+      "fn": 3,
+      "tp": 25
+    }
+  },
+  "feature_reference": {
+    "age": {
+      "median": 56.0,
+      "p25": 48.0,
+      "p75": 61.0
+    },
+    "sex": {
+      "median": 1.0,
+      "p25": 0.0,
+      "p75": 1.0
+    },
+    "trestbps": {
+      "median": 130.0,
+      "p25": 120.0,
+      "p75": 140.0
+    },
+    "chol": {
+      "median": 244.5,
+      "p25": 212.0,
+      "p75": 277.75
+    },
+    "fbs": {
+      "median": 0.0,
+      "p25": 0.0,
+      "p75": 0.0
+    },
+    "thalach": {
+      "median": 153.5,
+      "p25": 134.5,
+      "p75": 166.0
+    },
+    "exang": {
+      "median": 0.0,
+      "p25": 0.0,
+      "p75": 1.0
+    },
+    "oldpeak": {
+      "median": 0.8,
+      "p25": 0.0,
+      "p75": 1.6
+    },
+    "ca": {
+      "median": 0.0,
+      "p25": 0.0,
+      "p75": 1.0
+    },
+    "cp": {
+      "mode": "4"
+    },
+    "restecg": {
+      "mode": "0"
+    },
+    "slope": {
+      "mode": "1"
+    },
+    "thal": {
+      "mode": "3"
+    }
+  },
+  "permutation_importance": [
+    {
+      "feature": "ca",
+      "importance": 0.10541125541125544,
+      "std": 0.025358877263389812
+    },
+    {
+      "feature": "cp",
+      "importance": 0.03831168831168839,
+      "std": 0.011496339155748514
+    },
+    {
+      "feature": "slope",
+      "importance": 0.016450216450216503,
+      "std": 0.010069007229102185
+    },
+    {
+      "feature": "exang",
+      "importance": 0.014285714285714336,
+      "std": 0.006156477339102984
+    },
+    {
+      "feature": "thal",
+      "importance": 0.012012987012987097,
+      "std": 0.007234911217904004
+    },
+    {
+      "feature": "oldpeak",
+      "importance": 0.011471861471861544,
+      "std": 0.003144121005699994
+    },
+    {
+      "feature": "thalach",
+      "importance": 0.011255411255411319,
+      "std": 0.007454188466546582
+    },
+    {
+      "feature": "sex",
+      "importance": 0.009740259740259804,
+      "std": 0.011110876855160682
+    },
+    {
+      "feature": "trestbps",
+      "importance": 0.008874458874458901,
+      "std": 0.008560051919171086
+    },
+    {
+      "feature": "restecg",
+      "importance": 0.004978354978355026,
+      "std": 0.003530196197034633
+    },
+    {
+      "feature": "chol",
+      "importance": 0.004653679653679699,
+      "std": 0.003992611849717908
+    },
+    {
+      "feature": "fbs",
+      "importance": 0.003679653679653683,
+      "std": 0.002007276730626776
+    },
+    {
+      "feature": "age",
+      "importance": 0.002056277056277045,
+      "std": 0.0011299033018301533
+    }
+  ],
+  "artifact": {
+    "path": "models/heart_disease-v1.joblib",
+    "sha256": "c90ff8de4ec4d5e987d4c77caa1f962bfd084a375998dbf2e257085645208f2c"
+  },
+  "output_field": "risk_score",
+  "disclaimer": "This is a risk assessment and not a medical diagnosis.",
+  "limitations": "~303 Cleveland Clinic records; `ca` and `thal` have missing values; avoid the 1025-row Kaggle heart.csv which contains duplicated rows",
+  "ethical_note": "",
+  "notes": "Score is a model output called risk_score; it is a calibrated probability only when calibration.method != 'none'."
+}

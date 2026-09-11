@@ -4,12 +4,21 @@ export function About() {
       <h1>About EarlyDX</h1>
       <p className="sub">Purpose, method, and what this system is not.</p>
 
-      <h2>Purpose</h2>
+      <h2>What is EarlyDX?</h2>
       <p>
         EarlyDX is a portfolio and research prototype for multi-disease early risk assessment. Each
         condition has its own independent pipeline trained on a real, publicly available,
         de-identified dataset.
       </p>
+
+      <h2>How it works</h2>
+      <ol>
+        <li>Select a supported condition on the Assessment page.</li>
+        <li>Enter the values that condition's model requires.</li>
+        <li>EarlyDX sends those values to the corresponding trained model.</li>
+        <li>The model returns a risk estimate and, where defined, a risk level.</li>
+        <li>The result is presented together with the model's own performance information.</li>
+      </ol>
 
       <h2>Method</h2>
       <ul>
@@ -18,6 +27,15 @@ export function About() {
         <li>Metrics come from a held-out test set and stratified cross-validation. Model selection favours sensitivity for early detection.</li>
         <li>Probability calibration is applied only when it improves the validation Brier score, and is labelled as such.</li>
         <li>Explanations use the model's own permutation importance.</li>
+      </ul>
+
+      <h2>Research limitations</h2>
+      <ul>
+        <li>Models are research prototypes, not medical devices, and are not clinically validated.</li>
+        <li>Datasets vary in size, and some come from a single hospital, region, or demographic group — see the Datasets page for each dataset's documented limitations.</li>
+        <li>Some datasets are small or contain missing/imputed values.</li>
+        <li>None of the models have been externally validated on a separate population.</li>
+        <li>A risk score is a model output, not a statement about your health, and is not a diagnosis.</li>
       </ul>
 
       <h2>What EarlyDX is not</h2>

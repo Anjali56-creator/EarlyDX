@@ -50,7 +50,9 @@ def test_datasets_endpoint(client):
     assert body["count"] >= 12
     diab = next(d for d in body["datasets"] if d["disease"] == "diabetes")
     assert diab["records"] == 768
-    assert diab["target"] == "Outcome"
+    # every disease's registry entry documents its target the same way: the
+    # internal binary column name plus what a positive label means.
+    assert diab["target"] == "target (1 = tested positive for diabetes (Outcome = 1))"
 
 
 @requires_model
@@ -71,3 +73,25 @@ def test_schema_unknown_disease_404(client):
 
 def test_schema_unavailable_disease_404(client):
     assert client.get("/schema/stroke").status_code == 404
+
+
+def test_validation_samples_unavailable_disease_404(client):
+    assert client.get("/validation/stroke").status_code == 404
+
+
+@requires_model
+def test_validation_samples_endpoint_if_present(client):
+    # Only models retrained with the validation-sample feature carry this data;
+    # a model trained before it existed correctly reports "not available"
+    # rather than fabricating a sample.
+    r = client.get("/validation/diabetes")
+    assert r.status_code in (200, 404)
+    if r.status_code == 200:
+        body = r.json()
+        assert body["disease_key"] == "diabetes"
+        assert body["samples"]
+        sample = body["samples"][0]
+        assert sample["actual_outcome"] in (0, 1)
+        assert sample["predicted_outcome"] in (0, 1)
+        assert 0.0 <= sample["predicted_probability"] <= 1.0
+        assert sample["predicted_risk_level"] in ("LOW", "MODERATE", "HIGH")

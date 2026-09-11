@@ -1,0 +1,250 @@
+{
+  "disease": "breast_cancer",
+  "model_id": "breast_cancer-v1",
+  "target": "target",
+  "positive_label": "malignant diagnosis",
+  "required_features": [
+    "mean radius",
+    "mean texture",
+    "mean perimeter",
+    "mean area",
+    "mean smoothness",
+    "mean compactness",
+    "mean concavity",
+    "mean concave points",
+    "mean symmetry",
+    "mean fractal dimension",
+    "radius error",
+    "texture error",
+    "perimeter error",
+    "area error",
+    "smoothness error",
+    "compactness error",
+    "concavity error",
+    "concave points error",
+    "symmetry error",
+    "fractal dimension error",
+    "worst radius",
+    "worst texture",
+    "worst perimeter",
+    "worst area",
+    "worst smoothness",
+    "worst compactness",
+    "worst concavity",
+    "worst concave points",
+    "worst symmetry",
+    "worst fractal dimension"
+  ],
+  "feature_details": {
+    "mean radius": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 6.981,
+      "max": 28.11
+    },
+    "mean texture": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 9.71,
+      "max": 39.28
+    },
+    "mean perimeter": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 43.79,
+      "max": 188.5
+    },
+    "mean area": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 143.5,
+      "max": 2501.0
+    },
+    "mean smoothness": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.05263,
+      "max": 0.1634
+    },
+    "mean compactness": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.01938,
+      "max": 0.3454
+    },
+    "mean concavity": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.0,
+      "max": 0.4268
+    },
+    "mean concave points": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.0,
+      "max": 0.2012
+    },
+    "mean symmetry": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.106,
+      "max": 0.304
+    },
+    "mean fractal dimension": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.04996,
+      "max": 0.09744
+    },
+    "radius error": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.1115,
+      "max": 2.873
+    },
+    "texture error": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.3602,
+      "max": 4.885
+    },
+    "perimeter error": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.757,
+      "max": 21.98
+    },
+    "area error": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 6.802,
+      "max": 542.2
+    },
+    "smoothness error": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.001713,
+      "max": 0.03113
+    },
+    "compactness error": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.002252,
+      "max": 0.1354
+    },
+    "concavity error": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.0,
+      "max": 0.396
+    },
+    "concave points error": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.0,
+      "max": 0.05279
+    },
+    "symmetry error": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.007882,
+      "max": 0.07895
+    },
+    "fractal dimension error": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.0008948,
+      "max": 0.02984
+    },
+    "worst radius": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 7.93,
+      "max": 36.04
+    },
+    "worst texture": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 12.02,
+      "max": 49.54
+    },
+    "worst perimeter": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 50.41,
+      "max": 251.2
+    },
+    "worst area": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 185.2,
+      "max": 4254.0
+    },
+    "worst smoothness": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.07117,
+      "max": 0.2226
+    },
+    "worst compactness": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.02729,
+      "max": 1.058
+    },
+    "worst concavity": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.0,
+      "max": 1.252
+    },
+    "worst concave points": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.0,
+      "max": 0.291
+    },
+    "worst symmetry": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.1565,
+      "max": 0.6638
+    },
+    "worst fractal dimension": {
+      "type": "number",
+      "unit": "computed from digitised FNA image",
+      "required": true,
+      "min": 0.05504,
+      "max": 0.2075
+    }
+  }
+}

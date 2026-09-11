@@ -1,0 +1,452 @@
+{
+  "model_id": "obesity-v1",
+  "disease": "obesity",
+  "display_name": "Obesity",
+  "version": "v1",
+  "algorithm": "RandomForestClassifier",
+  "baseline_algorithm": "LogisticRegression",
+  "selection_rule": "prefer LogisticRegression; a candidate is chosen only if its validation ROC-AUC exceeds the baseline by >= 0.01",
+  "random_state": 42,
+  "training_date": "2026-09-10",
+  "dataset": {
+    "name": "UCI Estimation of Obesity Levels Based on Eating Habits and Physical Condition",
+    "registry_key": "obesity"
+  },
+  "split": {
+    "scheme": "stratified",
+    "sizes": {
+      "train": 1266,
+      "val": 422,
+      "test": 423
+    }
+  },
+  "target_positive_rate": 0.4604452865940313,
+  "validation_metrics_by_candidate": {
+    "LogisticRegression": {
+      "threshold": 0.5,
+      "n": 422,
+      "class_distribution": {
+        "0": 228,
+        "1": 194
+      },
+      "accuracy": 0.7559241706161137,
+      "precision": 0.6812749003984063,
+      "recall_sensitivity": 0.8814432989690721,
+      "specificity": 0.6491228070175439,
+      "f1": 0.7685393258426966,
+      "roc_auc": 0.8411783324290106,
+      "pr_auc": 0.78298822683154,
+      "confusion_matrix": {
+        "tn": 148,
+        "fp": 80,
+        "fn": 23,
+        "tp": 171
+      }
+    },
+    "RandomForestClassifier": {
+      "threshold": 0.5,
+      "n": 422,
+      "class_distribution": {
+        "0": 228,
+        "1": 194
+      },
+      "accuracy": 0.8815165876777251,
+      "precision": 0.839622641509434,
+      "recall_sensitivity": 0.9175257731958762,
+      "specificity": 0.8508771929824561,
+      "f1": 0.8768472906403941,
+      "roc_auc": 0.9654774823657082,
+      "pr_auc": 0.9625631795499301,
+      "confusion_matrix": {
+        "tn": 194,
+        "fp": 34,
+        "fn": 16,
+        "tp": 178
+      }
+    },
+    "GradientBoostingClassifier": {
+      "threshold": 0.5,
+      "n": 422,
+      "class_distribution": {
+        "0": 228,
+        "1": 194
+      },
+      "accuracy": 0.8554502369668247,
+      "precision": 0.8151658767772512,
+      "recall_sensitivity": 0.8865979381443299,
+      "specificity": 0.8289473684210527,
+      "f1": 0.8493827160493828,
+      "roc_auc": 0.9401564478205824,
+      "pr_auc": 0.9367002449435938,
+      "confusion_matrix": {
+        "tn": 189,
+        "fp": 39,
+        "fn": 22,
+        "tp": 172
+      }
+    }
+  },
+  "cross_validation": {
+    "folds": 5,
+    "per_fold": [
+      {
+        "roc_auc": 0.95850943927867,
+        "pr_auc": 0.9637010161016248,
+        "recall_sensitivity": 0.9294871794871795,
+        "f1": 0.8734939759036144
+      },
+      {
+        "roc_auc": 0.9680896027049872,
+        "pr_auc": 0.9664211725041261,
+        "recall_sensitivity": 0.9102564102564102,
+        "f1": 0.8847352024922118
+      },
+      {
+        "roc_auc": 0.9740525295258241,
+        "pr_auc": 0.9736783699932555,
+        "recall_sensitivity": 0.9419354838709677,
+        "f1": 0.8957055214723927
+      },
+      {
+        "roc_auc": 0.9788727401630627,
+        "pr_auc": 0.978537065699573,
+        "recall_sensitivity": 0.9290322580645162,
+        "f1": 0.9142857142857143
+      },
+      {
+        "roc_auc": 0.9755051400212691,
+        "pr_auc": 0.9746979614836369,
+        "recall_sensitivity": 0.9290322580645162,
+        "f1": 0.9230769230769231
+      }
+    ],
+    "summary": {
+      "roc_auc": {
+        "mean": 0.9710058903387626,
+        "std": 0.007156516007946372
+      },
+      "pr_auc": {
+        "mean": 0.9714071171564432,
+        "std": 0.005496690815486565
+      },
+      "recall_sensitivity": {
+        "mean": 0.927948717948718,
+        "std": 0.010132742518326528
+      },
+      "f1": {
+        "mean": 0.8982594674461712,
+        "std": 0.018305762183927925
+      }
+    }
+  },
+  "calibration": {
+    "method": "isotonic",
+    "validation_brier": {
+      "none": 0.0883998679948975,
+      "sigmoid": 0.07873125203209441,
+      "isotonic": 0.07787999063825088
+    }
+  },
+  "risk_thresholds": {
+    "low_cut": 0.41870503540506365,
+    "high_cut": 0.41870503540506365,
+    "policy": "validation sensitivity and specificity targets could not both be satisfied without the bands crossing; single cut at the validation median score 0.4187 (>= is HIGH, otherwise LOW; MODERATE unused).",
+    "target_sensitivity": 0.85,
+    "target_specificity": 0.85
+  },
+  "test_metrics": {
+    "threshold": 0.5,
+    "n": 423,
+    "class_distribution": {
+      "0": 228,
+      "1": 195
+    },
+    "accuracy": 0.9101654846335697,
+    "precision": 0.9197860962566845,
+    "recall_sensitivity": 0.882051282051282,
+    "specificity": 0.9342105263157895,
+    "f1": 0.900523560209424,
+    "roc_auc": 0.9638101664417453,
+    "pr_auc": 0.9674125699416677,
+    "confusion_matrix": {
+      "tn": 213,
+      "fp": 15,
+      "fn": 23,
+      "tp": 172
+    },
+    "calibration": {
+      "brier": 0.06687742690266721,
+      "bins": [
+        {
+          "bin": [
+            0.0,
+            0.1
+          ],
+          "count": 161,
+          "mean_predicted": 0.022389293289941974,
+          "observed_frequency": 0.049689440993788817
+        },
+        {
+          "bin": [
+            0.1,
+            0.2
+          ],
+          "count": 31,
+          "mean_predicted": 0.13926872965078724,
+          "observed_frequency": 0.12903225806451613
+        },
+        {
+          "bin": [
+            0.2,
+            0.30000000000000004
+          ],
+          "count": 19,
+          "mean_predicted": 0.2425582699575296,
+          "observed_frequency": 0.05263157894736842
+        },
+        {
+          "bin": [
+            0.30000000000000004,
+            0.4
+          ],
+          "count": 13,
+          "mean_predicted": 0.3524153444965682,
+          "observed_frequency": 0.23076923076923078
+        },
+        {
+          "bin": [
+            0.4,
+            0.5
+          ],
+          "count": 12,
+          "mean_predicted": 0.4303434352882949,
+          "observed_frequency": 0.5833333333333334
+        },
+        {
+          "bin": [
+            0.5,
+            0.6000000000000001
+          ],
+          "count": 9,
+          "mean_predicted": 0.5507950081309062,
+          "observed_frequency": 0.4444444444444444
+        },
+        {
+          "bin": [
+            0.6000000000000001,
+            0.7000000000000001
+          ],
+          "count": 12,
+          "mean_predicted": 0.6525712743435123,
+          "observed_frequency": 0.6666666666666666
+        },
+        {
+          "bin": [
+            0.7000000000000001,
+            0.8
+          ],
+          "count": 13,
+          "mean_predicted": 0.7688176259243916,
+          "observed_frequency": 0.6923076923076923
+        },
+        {
+          "bin": [
+            0.8,
+            0.9
+          ],
+          "count": 20,
+          "mean_predicted": 0.8547605375859998,
+          "observed_frequency": 0.9
+        },
+        {
+          "bin": [
+            0.9,
+            1.0
+          ],
+          "count": 133,
+          "mean_predicted": 0.9859138427535897,
+          "observed_frequency": 1.0
+        }
+      ]
+    }
+  },
+  "test_metrics_at_low_threshold_screening": {
+    "threshold": 0.41870503540506365,
+    "n": 423,
+    "class_distribution": {
+      "0": 228,
+      "1": 195
+    },
+    "accuracy": 0.91725768321513,
+    "precision": 0.9166666666666666,
+    "recall_sensitivity": 0.9025641025641026,
+    "specificity": 0.9298245614035088,
+    "f1": 0.9095607235142119,
+    "roc_auc": 0.9638101664417453,
+    "pr_auc": 0.9674125699416677,
+    "confusion_matrix": {
+      "tn": 212,
+      "fp": 16,
+      "fn": 19,
+      "tp": 176
+    }
+  },
+  "test_metrics_at_high_threshold": {
+    "threshold": 0.41870503540506365,
+    "n": 423,
+    "class_distribution": {
+      "0": 228,
+      "1": 195
+    },
+    "accuracy": 0.91725768321513,
+    "precision": 0.9166666666666666,
+    "recall_sensitivity": 0.9025641025641026,
+    "specificity": 0.9298245614035088,
+    "f1": 0.9095607235142119,
+    "roc_auc": 0.9638101664417453,
+    "pr_auc": 0.9674125699416677,
+    "confusion_matrix": {
+      "tn": 212,
+      "fp": 16,
+      "fn": 19,
+      "tp": 176
+    }
+  },
+  "feature_reference": {
+    "Age": {
+      "median": 22.868748500000002,
+      "p25": 20.0,
+      "p75": 26.0
+    },
+    "FCVC": {
+      "median": 2.3841035,
+      "p25": 2.0,
+      "p75": 3.0
+    },
+    "NCP": {
+      "median": 3.0,
+      "p25": 2.63795575,
+      "p75": 3.0
+    },
+    "CH2O": {
+      "median": 2.0,
+      "p25": 1.58761525,
+      "p75": 2.4604625
+    },
+    "FAF": {
+      "median": 1.0,
+      "p25": 0.1323145,
+      "p75": 1.6594125
+    },
+    "TUE": {
+      "median": 0.5993554999999999,
+      "p25": 0.0,
+      "p75": 1.0
+    },
+    "Gender": {
+      "mode": "Male"
+    },
+    "family_history_with_overweight": {
+      "mode": "yes"
+    },
+    "FAVC": {
+      "mode": "yes"
+    },
+    "CAEC": {
+      "mode": "Sometimes"
+    },
+    "SMOKE": {
+      "mode": "no"
+    },
+    "SCC": {
+      "mode": "no"
+    },
+    "CALC": {
+      "mode": "Sometimes"
+    },
+    "MTRANS": {
+      "mode": "Public_Transportation"
+    }
+  },
+  "permutation_importance": [
+    {
+      "feature": "family_history_with_overweight",
+      "importance": 0.11094466936572193,
+      "std": 0.011588655808083092
+    },
+    {
+      "feature": "CAEC",
+      "importance": 0.052108636977057976,
+      "std": 0.007094017183158376
+    },
+    {
+      "feature": "Age",
+      "importance": 0.050482456140350795,
+      "std": 0.006085960912969568
+    },
+    {
+      "feature": "NCP",
+      "importance": 0.030113585245164144,
+      "std": 0.0032762316561931576
+    },
+    {
+      "feature": "FAVC",
+      "importance": 0.029340980656770054,
+      "std": 0.00592860233245563
+    },
+    {
+      "feature": "CALC",
+      "importance": 0.024578272604588315,
+      "std": 0.0021804563422160054
+    },
+    {
+      "feature": "MTRANS",
+      "importance": 0.024479307242465064,
+      "std": 0.0018080862478143265
+    },
+    {
+      "feature": "FCVC",
+      "importance": 0.02417004048582989,
+      "std": 0.003848697509185414
+    },
+    {
+      "feature": "Gender",
+      "importance": 0.02258209626630673,
+      "std": 0.004200681107946576
+    },
+    {
+      "feature": "TUE",
+      "importance": 0.018105038236617133,
+      "std": 0.0030055258781113785
+    },
+    {
+      "feature": "CH2O",
+      "importance": 0.016294421952316573,
+      "std": 0.0013528827876531724
+    },
+    {
+      "feature": "FAF",
+      "importance": 0.015449842555105653,
+      "std": 0.004207320086996112
+    },
+    {
+      "feature": "SCC",
+      "importance": 0.0010031488978856195,
+      "std": 0.0007123260766213852
+    },
+    {
+      "feature": "SMOKE",
+      "importance": -5.39811066127549e-05,
+      "std": 6.687390349674336e-05
+    }
+  ],
+  "artifact": {
+    "path": "models/obesity-v1.joblib",
+    "sha256": "59ee224873366ee2a962a94073060e0935fc3833fc6f1c9bb395e35de9deb071"
+  },
+  "output_field": "risk_score",
+  "disclaimer": "This is a risk assessment and not a medical diagnosis.",
+  "limitations": "77% of rows are SMOTE-synthetic, so metrics are weak evidence; population is Mexico/Peru/Colombia; Height and Weight excluded on purpose because the label is BMI-derived; treat this as a demonstration model",
+  "ethical_note": "",
+  "notes": "Because most of the dataset is synthetic, this model must not be used to claim real-world obesity-prediction performance."
+}

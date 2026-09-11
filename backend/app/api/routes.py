@@ -101,6 +101,35 @@ def get_schema(disease: str = PathParam(...)) -> dict[str, Any]:
     return schema
 
 
+@router.get("/validation/{disease}", tags=["research"])
+def validation_samples(disease: str = PathParam(...)) -> dict[str, Any]:
+    """A bounded sample of held-out TEST rows (never seen in training/tuning/
+    calibration/threshold selection) with their real label and the model's own
+    prediction, for research validation display. Not diagnosis; not a live
+    prediction — these are stored at training time from the test split."""
+    bundle = STORE.get(disease)
+    if bundle is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"no model available for '{disease}' "
+            f"({UNAVAILABLE_REASONS.get(disease, 'not implemented in this version')})",
+        )
+    vs = bundle.metadata.get("validation_samples")
+    if not vs or not vs.get("samples"):
+        raise HTTPException(
+            status_code=404,
+            detail=f"no stored validation samples for '{disease}' "
+            "(this model was trained before validation samples were captured)",
+        )
+    return {
+        "disease": display_name(disease),
+        "disease_key": disease,
+        "model_version": bundle.model_id,
+        "note": vs["note"],
+        "samples": vs["samples"],
+    }
+
+
 # ── prediction endpoints ──────────────────────────────────────────────────
 # NOTE: /predict/all is declared before /predict/{disease} so the literal path
 # is matched first and never captured as disease="all".
@@ -110,14 +139,18 @@ def predict_all(
     db: Session = Depends(get_session),
 ) -> PredictAllResponse:
     raw = payload.get("features", payload)
-    features: dict[str, float] = {}
+    features: dict[str, Any] = {}
     for k, v in raw.items():
-        if k in {"features", "client_context"}:
+        if k in {"features", "client_context"} or v is None:
             continue
-        try:
-            features[k] = float(v)
-        except (TypeError, ValueError):
-            continue
+        # numeric strings become floats; genuine categoricals pass through as-is
+        if isinstance(v, str):
+            try:
+                features[k] = float(v)
+            except ValueError:
+                features[k] = v
+        else:
+            features[k] = v
 
     if STORE.count() == 0:
         raise HTTPException(status_code=409, detail="no models are currently loaded")

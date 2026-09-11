@@ -1,0 +1,605 @@
+{
+  "model_id": "breast_cancer-v1",
+  "disease": "breast_cancer",
+  "display_name": "Breast Cancer",
+  "version": "v1",
+  "algorithm": "LogisticRegression",
+  "baseline_algorithm": "LogisticRegression",
+  "selection_rule": "prefer LogisticRegression; a candidate is chosen only if its validation ROC-AUC exceeds the baseline by >= 0.01",
+  "random_state": 42,
+  "training_date": "2026-09-10",
+  "dataset": {
+    "name": "UCI Breast Cancer Wisconsin (Diagnostic) / WDBC (via scikit-learn)",
+    "registry_key": "breast_cancer"
+  },
+  "split": {
+    "scheme": "stratified",
+    "sizes": {
+      "train": 341,
+      "val": 114,
+      "test": 114
+    }
+  },
+  "target_positive_rate": 0.37258347978910367,
+  "validation_metrics_by_candidate": {
+    "LogisticRegression": {
+      "threshold": 0.5,
+      "n": 114,
+      "class_distribution": {
+        "0": 71,
+        "1": 43
+      },
+      "accuracy": 0.9736842105263158,
+      "precision": 0.9545454545454546,
+      "recall_sensitivity": 0.9767441860465116,
+      "specificity": 0.971830985915493,
+      "f1": 0.9655172413793104,
+      "roc_auc": 0.996069439895185,
+      "pr_auc": 0.9949260042283299,
+      "confusion_matrix": {
+        "tn": 69,
+        "fp": 2,
+        "fn": 1,
+        "tp": 42
+      }
+    },
+    "RandomForestClassifier": {
+      "threshold": 0.5,
+      "n": 114,
+      "class_distribution": {
+        "0": 71,
+        "1": 43
+      },
+      "accuracy": 0.9649122807017544,
+      "precision": 0.9534883720930233,
+      "recall_sensitivity": 0.9534883720930233,
+      "specificity": 0.971830985915493,
+      "f1": 0.9534883720930233,
+      "roc_auc": 0.9911562397641663,
+      "pr_auc": 0.988667356818717,
+      "confusion_matrix": {
+        "tn": 69,
+        "fp": 2,
+        "fn": 2,
+        "tp": 41
+      }
+    },
+    "GradientBoostingClassifier": {
+      "threshold": 0.5,
+      "n": 114,
+      "class_distribution": {
+        "0": 71,
+        "1": 43
+      },
+      "accuracy": 0.9649122807017544,
+      "precision": 0.9534883720930233,
+      "recall_sensitivity": 0.9534883720930233,
+      "specificity": 0.971830985915493,
+      "f1": 0.9534883720930233,
+      "roc_auc": 0.9901735997379626,
+      "pr_auc": 0.9865840576208079,
+      "confusion_matrix": {
+        "tn": 69,
+        "fp": 2,
+        "fn": 2,
+        "tp": 41
+      }
+    }
+  },
+  "cross_validation": {
+    "folds_requested": 5,
+    "folds_scored": 5,
+    "folds_skipped_single_class": 0,
+    "per_fold": [
+      {
+        "roc_auc": 0.9943240454076367,
+        "pr_auc": 0.9910359536657115,
+        "recall_sensitivity": 0.9117647058823529,
+        "f1": 0.9253731343283582
+      },
+      {
+        "roc_auc": 0.9979360165118679,
+        "pr_auc": 0.9969040247678019,
+        "recall_sensitivity": 0.9705882352941176,
+        "f1": 0.9565217391304348
+      },
+      {
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "recall_sensitivity": 1.0,
+        "f1": 1.0
+      },
+      {
+        "roc_auc": 0.9865841073271413,
+        "pr_auc": 0.9872549019607844,
+        "recall_sensitivity": 0.9411764705882353,
+        "f1": 0.9696969696969697
+      },
+      {
+        "roc_auc": 0.9979360165118679,
+        "pr_auc": 0.9969040247678019,
+        "recall_sensitivity": 0.9705882352941176,
+        "f1": 0.9565217391304348
+      }
+    ],
+    "summary": {
+      "roc_auc": {
+        "mean": 0.9953560371517026,
+        "std": 0.004751646824859202
+      },
+      "pr_auc": {
+        "mean": 0.99441978103242,
+        "std": 0.004610153085496317
+      },
+      "recall_sensitivity": {
+        "mean": 0.9588235294117646,
+        "std": 0.029994232432898744
+      },
+      "f1": {
+        "mean": 0.9616227164572395,
+        "std": 0.02410013112576938
+      }
+    }
+  },
+  "calibration": {
+    "method": "isotonic",
+    "validation_brier": {
+      "none": 0.025769431852886927,
+      "sigmoid": 0.026297976828929797,
+      "isotonic": 0.022374623828998186
+    }
+  },
+  "risk_thresholds": {
+    "low_cut": 0.07797277053390927,
+    "high_cut": 0.07797277053390927,
+    "policy": "validation sensitivity and specificity targets could not both be satisfied without the bands crossing; single cut at the validation median score 0.0780 (>= is HIGH, otherwise LOW; MODERATE unused).",
+    "target_sensitivity": 0.85,
+    "target_specificity": 0.85
+  },
+  "test_metrics": {
+    "threshold": 0.5,
+    "n": 114,
+    "class_distribution": {
+      "0": 72,
+      "1": 42
+    },
+    "accuracy": 0.9736842105263158,
+    "precision": 0.975609756097561,
+    "recall_sensitivity": 0.9523809523809523,
+    "specificity": 0.9861111111111112,
+    "f1": 0.963855421686747,
+    "roc_auc": 0.9940476190476191,
+    "pr_auc": 0.9897487450264658,
+    "confusion_matrix": {
+      "tn": 71,
+      "fp": 1,
+      "fn": 2,
+      "tp": 40
+    },
+    "calibration": {
+      "brier": 0.019157524926530143,
+      "bins": [
+        {
+          "bin": [
+            0.0,
+            0.1
+          ],
+          "count": 69,
+          "mean_predicted": 0.0032914206923408094,
+          "observed_frequency": 0.014492753623188406
+        },
+        {
+          "bin": [
+            0.1,
+            0.2
+          ],
+          "count": 1,
+          "mean_predicted": 0.17822547941335162,
+          "observed_frequency": 0.0
+        },
+        {
+          "bin": [
+            0.2,
+            0.30000000000000004
+          ],
+          "count": 2,
+          "mean_predicted": 0.2288159037250247,
+          "observed_frequency": 0.0
+        },
+        {
+          "bin": [
+            0.30000000000000004,
+            0.4
+          ],
+          "count": 1,
+          "mean_predicted": 0.37557105996168516,
+          "observed_frequency": 1.0
+        },
+        {
+          "bin": [
+            0.5,
+            0.6000000000000001
+          ],
+          "count": 1,
+          "mean_predicted": 0.5733713340045341,
+          "observed_frequency": 1.0
+        },
+        {
+          "bin": [
+            0.6000000000000001,
+            0.7000000000000001
+          ],
+          "count": 2,
+          "mean_predicted": 0.6503394010371232,
+          "observed_frequency": 0.5
+        },
+        {
+          "bin": [
+            0.9,
+            1.0
+          ],
+          "count": 38,
+          "mean_predicted": 0.9997349279596399,
+          "observed_frequency": 1.0
+        }
+      ]
+    }
+  },
+  "test_metrics_at_low_threshold_screening": {
+    "threshold": 0.07797277053390927,
+    "n": 114,
+    "class_distribution": {
+      "0": 72,
+      "1": 42
+    },
+    "accuracy": 0.956140350877193,
+    "precision": 0.9111111111111111,
+    "recall_sensitivity": 0.9761904761904762,
+    "specificity": 0.9444444444444444,
+    "f1": 0.9425287356321839,
+    "roc_auc": 0.9940476190476191,
+    "pr_auc": 0.9897487450264658,
+    "confusion_matrix": {
+      "tn": 68,
+      "fp": 4,
+      "fn": 1,
+      "tp": 41
+    }
+  },
+  "test_metrics_at_high_threshold": {
+    "threshold": 0.07797277053390927,
+    "n": 114,
+    "class_distribution": {
+      "0": 72,
+      "1": 42
+    },
+    "accuracy": 0.956140350877193,
+    "precision": 0.9111111111111111,
+    "recall_sensitivity": 0.9761904761904762,
+    "specificity": 0.9444444444444444,
+    "f1": 0.9425287356321839,
+    "roc_auc": 0.9940476190476191,
+    "pr_auc": 0.9897487450264658,
+    "confusion_matrix": {
+      "tn": 68,
+      "fp": 4,
+      "fn": 1,
+      "tp": 41
+    }
+  },
+  "feature_reference": {
+    "mean radius": {
+      "median": 13.34,
+      "p25": 11.71,
+      "p75": 15.934999999999999
+    },
+    "mean texture": {
+      "median": 18.9,
+      "p25": 16.335,
+      "p75": 21.83
+    },
+    "mean perimeter": {
+      "median": 86.18,
+      "p25": 75.235,
+      "p75": 104.5
+    },
+    "mean area": {
+      "median": 546.4,
+      "p25": 420.4,
+      "p75": 795.5
+    },
+    "mean smoothness": {
+      "median": 0.09524,
+      "p25": 0.08513000000000001,
+      "p75": 0.1049
+    },
+    "mean compactness": {
+      "median": 0.09228,
+      "p25": 0.063735,
+      "p75": 0.13035
+    },
+    "mean concavity": {
+      "median": 0.0594,
+      "p25": 0.029519999999999998,
+      "p75": 0.13219999999999998
+    },
+    "mean concave points": {
+      "median": 0.03334,
+      "p25": 0.019685,
+      "p75": 0.074075
+    },
+    "mean symmetry": {
+      "median": 0.1799,
+      "p25": 0.16205,
+      "p75": 0.1954
+    },
+    "mean fractal dimension": {
+      "median": 0.0613,
+      "p25": 0.057635,
+      "p75": 0.06637000000000001
+    },
+    "radius error": {
+      "median": 0.3274,
+      "p25": 0.23365000000000002,
+      "p75": 0.485
+    },
+    "texture error": {
+      "median": 1.139,
+      "p25": 0.8418000000000001,
+      "p75": 1.4755
+    },
+    "perimeter error": {
+      "median": 2.31,
+      "p25": 1.613,
+      "p75": 3.3835
+    },
+    "area error": {
+      "median": 24.87,
+      "p25": 17.855,
+      "p75": 45.39
+    },
+    "smoothness error": {
+      "median": 0.006261,
+      "p25": 0.005076000000000001,
+      "p75": 0.0080395
+    },
+    "compactness error": {
+      "median": 0.02016,
+      "p25": 0.013014999999999999,
+      "p75": 0.032045000000000004
+    },
+    "concavity error": {
+      "median": 0.02586,
+      "p25": 0.015035,
+      "p75": 0.040510000000000004
+    },
+    "concave points error": {
+      "median": 0.01091,
+      "p25": 0.0075555,
+      "p75": 0.014509999999999999
+    },
+    "symmetry error": {
+      "median": 0.0187,
+      "p25": 0.015015,
+      "p75": 0.023004999999999998
+    },
+    "fractal dimension error": {
+      "median": 0.003131,
+      "p25": 0.0022195,
+      "p75": 0.0044989999999999995
+    },
+    "worst radius": {
+      "median": 14.92,
+      "p25": 13.02,
+      "p75": 19.185000000000002
+    },
+    "worst texture": {
+      "median": 25.48,
+      "p25": 21.490000000000002,
+      "p75": 30.2
+    },
+    "worst perimeter": {
+      "median": 97.65,
+      "p25": 84.13499999999999,
+      "p75": 127.0
+    },
+    "worst area": {
+      "median": 683.4,
+      "p25": 516.15,
+      "p75": 1122.5
+    },
+    "worst smoothness": {
+      "median": 0.1311,
+      "p25": 0.11455,
+      "p75": 0.1466
+    },
+    "worst compactness": {
+      "median": 0.2167,
+      "p25": 0.14775,
+      "p75": 0.3381
+    },
+    "worst concavity": {
+      "median": 0.2298,
+      "p25": 0.11935,
+      "p75": 0.3857
+    },
+    "worst concave points": {
+      "median": 0.101,
+      "p25": 0.064075,
+      "p75": 0.1621
+    },
+    "worst symmetry": {
+      "median": 0.2823,
+      "p25": 0.2512,
+      "p75": 0.3187
+    },
+    "worst fractal dimension": {
+      "median": 0.08009,
+      "p25": 0.071365,
+      "p75": 0.092085
+    }
+  },
+  "permutation_importance": [
+    {
+      "feature": "worst concavity",
+      "importance": 0.010367063492063521,
+      "std": 0.004144199368090378
+    },
+    {
+      "feature": "worst symmetry",
+      "importance": 0.010003306878306884,
+      "std": 0.0029846752218119646
+    },
+    {
+      "feature": "worst texture",
+      "importance": 0.008416005291005325,
+      "std": 0.006994438492085979
+    },
+    {
+      "feature": "mean concave points",
+      "importance": 0.0054563492063492095,
+      "std": 0.006128440493862807
+    },
+    {
+      "feature": "radius error",
+      "importance": 0.003158068783068779,
+      "std": 0.003996708225063776
+    },
+    {
+      "feature": "worst concave points",
+      "importance": 0.0031415343915344287,
+      "std": 0.001558097749919312
+    },
+    {
+      "feature": "worst radius",
+      "importance": 0.002678571428571441,
+      "std": 0.002708613939117095
+    },
+    {
+      "feature": "mean concavity",
+      "importance": 0.0025132275132275115,
+      "std": 0.00152224196911163
+    },
+    {
+      "feature": "worst area",
+      "importance": 0.0021494708994708954,
+      "std": 0.00266301249011752
+    },
+    {
+      "feature": "concave points error",
+      "importance": 0.0018683862433862663,
+      "std": 0.0028677041996609705
+    },
+    {
+      "feature": "worst perimeter",
+      "importance": 0.0010747354497354755,
+      "std": 0.001531998595886055
+    },
+    {
+      "feature": "worst smoothness",
+      "importance": 0.001041666666666674,
+      "std": 0.0005178723466721509
+    },
+    {
+      "feature": "mean perimeter",
+      "importance": 0.0009093915343915571,
+      "std": 0.000480636304687469
+    },
+    {
+      "feature": "mean radius",
+      "importance": 0.0009093915343915459,
+      "std": 0.0005082812879940367
+    },
+    {
+      "feature": "mean area",
+      "importance": 0.0008432539682539763,
+      "std": 0.0004985057351746526
+    },
+    {
+      "feature": "texture error",
+      "importance": 0.000710978835978815,
+      "std": 0.00043148109625328675
+    },
+    {
+      "feature": "worst fractal dimension",
+      "importance": 0.0006117724867724328,
+      "std": 0.0002097979090682632
+    },
+    {
+      "feature": "mean smoothness",
+      "importance": 0.00038029100529097805,
+      "std": 0.001432015768662375
+    },
+    {
+      "feature": "area error",
+      "importance": 0.0002645502645502784,
+      "std": 0.0020293566127732796
+    },
+    {
+      "feature": "concavity error",
+      "importance": 0.00011574074074077734,
+      "std": 0.00016616857839152276
+    },
+    {
+      "feature": "symmetry error",
+      "importance": 6.613756613758071e-05,
+      "std": 0.00040635600950542566
+    },
+    {
+      "feature": "fractal dimension error",
+      "importance": 6.61375661375696e-05,
+      "std": 0.0005924759546021515
+    },
+    {
+      "feature": "mean fractal dimension",
+      "importance": -1.653439153436187e-05,
+      "std": 0.00018779458815477616
+    },
+    {
+      "feature": "worst compactness",
+      "importance": -0.00011574074074073293,
+      "std": 0.00020979790906828247
+    },
+    {
+      "feature": "smoothness error",
+      "importance": -0.00023148148148141034,
+      "std": 0.0010618117961641344
+    },
+    {
+      "feature": "mean symmetry",
+      "importance": -0.00023148148148144365,
+      "std": 0.00039957162611095165
+    },
+    {
+      "feature": "compactness error",
+      "importance": -0.00033068783068785913,
+      "std": 0.0021960261528946867
+    },
+    {
+      "feature": "perimeter error",
+      "importance": -0.00038029100529096693,
+      "std": 0.0019197703144138688
+    },
+    {
+      "feature": "mean texture",
+      "importance": -0.0014550264550264535,
+      "std": 0.002258382417852344
+    },
+    {
+      "feature": "mean compactness",
+      "importance": -0.002529761904761907,
+      "std": 0.001866336610469686
+    }
+  ],
+  "artifact": {
+    "path": "models/breast_cancer-v1.joblib",
+    "sha256": "bf7a816cc8fe613281555ee607b5a7f177472284e89dd320a049c65aaba6f99d"
+  },
+  "output_field": "risk_score",
+  "disclaimer": "This is a risk assessment and not a medical diagnosis.",
+  "limitations": "features are computed from digitised fine-needle-aspirate images, not routine intake data; single-institution sample; this is a pipeline demonstration, not a self-service risk tool",
+  "ethical_note": "",
+  "notes": "Score is a model output called risk_score; it is a calibrated probability only when calibration.method != 'none'.",
+  "status": "active",
+  "status_reason": ""
+}

@@ -1,0 +1,186 @@
+{
+  "disease": "parkinsons",
+  "model_id": "parkinsons-v1",
+  "target": "target",
+  "positive_label": "Parkinson's disease (status = 1)",
+  "required_features": [
+    "MDVP:Fo(Hz)",
+    "MDVP:Fhi(Hz)",
+    "MDVP:Flo(Hz)",
+    "MDVP:Jitter(%)",
+    "MDVP:Jitter(Abs)",
+    "MDVP:RAP",
+    "MDVP:PPQ",
+    "Jitter:DDP",
+    "MDVP:Shimmer",
+    "MDVP:Shimmer(dB)",
+    "Shimmer:APQ3",
+    "Shimmer:APQ5",
+    "MDVP:APQ",
+    "Shimmer:DDA",
+    "NHR",
+    "HNR",
+    "RPDE",
+    "DFA",
+    "spread1",
+    "spread2",
+    "D2",
+    "PPE"
+  ],
+  "feature_details": {
+    "MDVP:Fo(Hz)": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 88.333,
+      "max": 260.105
+    },
+    "MDVP:Fhi(Hz)": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 102.145,
+      "max": 592.03
+    },
+    "MDVP:Flo(Hz)": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 65.476,
+      "max": 239.17
+    },
+    "MDVP:Jitter(%)": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 0.00168,
+      "max": 0.03316
+    },
+    "MDVP:Jitter(Abs)": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 7e-06,
+      "max": 0.00026
+    },
+    "MDVP:RAP": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 0.00068,
+      "max": 0.02144
+    },
+    "MDVP:PPQ": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 0.00092,
+      "max": 0.01958
+    },
+    "Jitter:DDP": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 0.00204,
+      "max": 0.06433
+    },
+    "MDVP:Shimmer": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 0.00954,
+      "max": 0.11908
+    },
+    "MDVP:Shimmer(dB)": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 0.085,
+      "max": 1.302
+    },
+    "Shimmer:APQ3": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 0.00455,
+      "max": 0.05647
+    },
+    "Shimmer:APQ5": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 0.0057,
+      "max": 0.0794
+    },
+    "MDVP:APQ": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 0.00719,
+      "max": 0.13778
+    },
+    "Shimmer:DDA": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 0.01364,
+      "max": 0.16942
+    },
+    "NHR": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 0.00065,
+      "max": 0.31482
+    },
+    "HNR": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 8.441,
+      "max": 33.047
+    },
+    "RPDE": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 0.25657,
+      "max": 0.685151
+    },
+    "DFA": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 0.574282,
+      "max": 0.825288
+    },
+    "spread1": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": -7.964984,
+      "max": -2.434031
+    },
+    "spread2": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 0.006274,
+      "max": 0.450493
+    },
+    "D2": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 1.423287,
+      "max": 3.671155
+    },
+    "PPE": {
+      "type": "number",
+      "unit": "acoustic voice measure",
+      "required": true,
+      "min": 0.044539,
+      "max": 0.527367
+    }
+  }
+}

@@ -1,0 +1,38 @@
+# Render Blueprint for the EarlyDX backend/API + ML service.
+# Deploy: Render dashboard -> New -> Blueprint -> select this repo.
+#
+# The database is optional (see backend/app/config): if EARLYDX_DATABASE_URL
+# is unset, the API falls back to a local SQLite file and still serves
+# predictions, it just won't persist assessment history across restarts.
+# Uncomment the `databases:` block below to provision a real Postgres
+# instance and wire it up automatically.
+services:
+  - type: web
+    name: earlydx-api
+    runtime: python
+    plan: free
+    branch: main
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: EARLYDX_ENV
+        value: production
+      - key: EARLYDX_LOG_LEVEL
+        value: INFO
+      # Set this to the deployed Vercel frontend's exact origin, e.g.
+      # https://earlydx.vercel.app -- no trailing slash, no wildcard.
+      - key: EARLYDX_CORS_ORIGINS
+        sync: false
+      # Optional: only needed if you provision Postgres (see `databases:`
+      # below, or Render's dashboard "Environment" tab).
+      - key: EARLYDX_DATABASE_URL
+        sync: false
+
+# databases:
+#   - name: earlydx-db
+#     plan: free
+#     databaseName: earlydx
+#     user: earlydx

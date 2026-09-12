@@ -48,6 +48,7 @@ export function Results() {
 
   return (
     <>
+      <span className="eyebrow">Step 04 · Result</span>
       <h1>Risk Assessment</h1>
       <p className="sub">
         Output of the <span className="mono">{result.model_version}</span> model for {result.disease}. A
@@ -55,6 +56,24 @@ export function Results() {
       </p>
 
       <RiskBadge result={result} />
+
+      <div className="result-grid">
+        <div className="card"><div className="k">Condition</div><div className="v">{result.disease}</div></div>
+        <div className="card">
+          <div className="k">Prediction</div>
+          <div className="v">{result.predicted_class == null ? result.risk_level : result.predicted_class === 1 ? "Positive" : "Negative"}</div>
+          <div className="hint">{result.predicted_class == null ? "validation-derived level" : `at the ${result.decision_threshold?.toFixed(2) ?? "0.50"} decision threshold`}</div>
+        </div>
+        <div className="card">
+          <div className="k">{result.calibrated ? "Probability" : "Model score"}</div>
+          <div className="v">{pctScore}%</div>
+          <div className="hint">{result.calibrated ? "calibrated risk score" : "uncalibrated ranking score"}</div>
+        </div>
+        <div className="card"><div className="k">Model</div><div className="v mono" style={{ fontSize: 15 }}>{result.model_version}</div><div className="hint">{result.model_algorithm ?? "—"}</div></div>
+      </div>
+
+      <div className="disclaimer">{result.disclaimer} This is a statistical research prototype; it has not been clinically
+        validated and must not replace professional medical advice.</div>
 
       <div className="two-col">
         <div>
@@ -195,12 +214,10 @@ export function Results() {
         ))}
       </div>
 
-      <div className="disclaimer">{result.disclaimer} This is a statistical research prototype; it has not been
-        clinically validated and must not replace professional medical advice.</div>
-
-      <p>
+      <div className="form-actions">
         <Link to="/assessment" className="btn-link">Run another assessment</Link>
-      </p>
+        <Link to="/validation" className="btn-secondary">See how this model was validated</Link>
+      </div>
     </>
   );
 }

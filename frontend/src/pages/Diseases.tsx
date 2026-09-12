@@ -29,6 +29,7 @@ export function Diseases() {
 
   return (
     <>
+      <span className="eyebrow">Scope</span>
       <h1>Conditions</h1>
       <p className="sub">
         The {diseases.length || 12} conditions in scope, grouped by clinical area, with the exact inputs each

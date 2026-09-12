@@ -1,8 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { api, ApiError } from "../api/client";
+import { GroupedBarChart, HBarChart } from "../components/Charts";
 import { ApiErrorBox, Loading } from "../components/PageState";
-import type { ClassificationMetrics, DiseaseInfo, EvaluationDetail, ValidationSamples } from "../types";
+import type { ClassificationMetrics, DiseaseInfo, EvaluationDetail, EvaluationSummary, ValidationSamples } from "../types";
 import { humanizeLabel } from "../utils/format";
+
+type MetricKey = "accuracy" | "precision" | "recall_sensitivity" | "specificity" | "f1" | "roc_auc" | "pr_auc";
+const OVERVIEW_METRICS: { key: MetricKey; label: string }[] = [
+  { key: "roc_auc", label: "ROC-AUC" },
+  { key: "f1", label: "F1" },
+  { key: "accuracy", label: "Accuracy" },
+  { key: "recall_sensitivity", label: "Recall" },
+  { key: "precision", label: "Precision" },
+  { key: "pr_auc", label: "PR-AUC" },
+];
 
 const fmt = (v: number | null | undefined, d = 3) => (v == null ? "—" : v.toFixed(d));
 const pct = (v: number | null | undefined) => (v == null ? "—" : `${(v * 100).toFixed(1)}%`);
@@ -41,6 +52,39 @@ export function Validation() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
+  const [summary, setSummary] = useState<EvaluationSummary[]>([]);
+  const [metric, setMetric] = useState<MetricKey>("roc_auc");
+  const [sortKey, setSortKey] = useState<MetricKey | "disease">("roc_auc");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+
+  useEffect(() => {
+    api.evaluationSummary().then((r) => setSummary(r.models)).catch(() => setSummary([]));
+  }, [attempt]);
+
+  const ranked = useMemo(() => {
+    const rows = [...summary];
+    rows.sort((a, b) => {
+      if (sortKey === "disease") return sortDir === "asc" ? a.disease.localeCompare(b.disease) : b.disease.localeCompare(a.disease);
+      const av = a.test_metrics[sortKey] ?? -1, bv = b.test_metrics[sortKey] ?? -1;
+      return sortDir === "asc" ? av - bv : bv - av;
+    });
+    return rows;
+  }, [summary, sortKey, sortDir]);
+  const bestKey = useMemo(() => {
+    if (!summary.length) return null;
+    return [...summary].sort((a, b) => (b.test_metrics[metric] ?? -1) - (a.test_metrics[metric] ?? -1))[0].disease_key;
+  }, [summary, metric]);
+  const chartData = useMemo(
+    () => [...summary]
+      .sort((a, b) => (b.test_metrics[metric] ?? -1) - (a.test_metrics[metric] ?? -1))
+      .map((e) => ({ key: e.disease_key, label: e.disease, value: e.test_metrics[metric], sub: e.selected_algorithm, best: e.disease_key === bestKey })),
+    [summary, metric, bestKey],
+  );
+  function toggleSort(k: MetricKey | "disease") {
+    if (sortKey === k) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else { setSortKey(k); setSortDir(k === "disease" ? "asc" : "desc"); }
+  }
+  const metricLabel = OVERVIEW_METRICS.find((m) => m.key === metric)?.label ?? metric;
 
   const loadDiseases = useCallback(() => {
     setError(null);
@@ -89,11 +133,65 @@ export function Validation() {
 
   return (
     <>
-      <h1>Validation &amp; model comparison</h1>
+      <span className="eyebrow">Model validation</span>
+      <h1>Comparative Analysis</h1>
       <p className="sub">
         How each model was chosen and how it performs on data it never saw. Every number on this
         page was written by the training run — nothing is recomputed or estimated here.
       </p>
+
+      <h2>Model performance across conditions</h2>
+      <p className="muted">Held-out test split, 0.5 threshold. Pick a metric to re-rank; ★ marks the best model on that metric. Click a column header to sort the table.</p>
+      <div className="chart-card">
+        <div className="chart-toolbar">
+          <span className="muted">Metric</span>
+          <div className="seg" role="group" aria-label="Metric">
+            {OVERVIEW_METRICS.map((m) => (
+              <button key={m.key} type="button" className={metric === m.key ? "on" : ""} aria-pressed={metric === m.key} onClick={() => setMetric(m.key)}>{m.label}</button>
+            ))}
+          </div>
+          {bestKey && <span className="pill brand">Best {metricLabel}: {summary.find((e) => e.disease_key === bestKey)?.disease}</span>}
+        </div>
+        {chartData.length ? <HBarChart data={chartData} title={`Test ${metricLabel} by condition`} valueLabel={metricLabel} /> : <Loading what="model summary" />}
+      </div>
+      <div className="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th className={`sortable ${sortKey === "disease" ? "sorted" : ""}`} onClick={() => toggleSort("disease")}>Condition {sortKey === "disease" ? (sortDir === "asc" ? "↑" : "↓") : ""}</th>
+              <th>Deployed model</th>
+              {OVERVIEW_METRICS.map((m) => (
+                <th key={m.key} className={`sortable ${sortKey === m.key ? "sorted" : ""}`} onClick={() => toggleSort(m.key)}>
+                  {m.label} {sortKey === m.key ? (sortDir === "asc" ? "↑" : "↓") : ""}
+                </th>
+              ))}
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {ranked.map((e) => (
+              <tr key={e.disease_key} className={e.disease_key === selected ? "row-selected" : ""}>
+                <td>{e.disease}</td>
+                <td className="mono">{e.selected_algorithm}{e.selected_algorithm === e.baseline_algorithm ? " · baseline" : ""}</td>
+                {OVERVIEW_METRICS.map((m) => (
+                  <td key={m.key} className={m.key === metric && e.disease_key === bestKey ? "cell-best" : ""}>{fmt(e.test_metrics[m.key])}</td>
+                ))}
+                <td><button type="button" className="btn-ghost btn-sm" onClick={() => { setSelected(e.disease_key); document.getElementById("detail")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>Details ↓</button></td>
+              </tr>
+            ))}
+            {!summary.length && <tr><td colSpan={9} className="muted">Loading model summary…</td></tr>}
+          </tbody>
+        </table>
+      </div>
+      <div className="callout">
+        <strong>Reading this table.</strong> Accuracy can look strong on imbalanced data simply by predicting the
+        majority class, and several test splits here are small (43–154 records), so differences of a few
+        hundredths are not meaningful. For screening, <strong>recall</strong> (missed cases) and <strong>PR-AUC</strong>{" "}
+        deserve more weight than accuracy; ROC-AUC is used for ranking because it is threshold-independent.
+        See the per-condition confusion matrices below for where each model actually errs.
+      </div>
+
+      <h2 id="detail">Per-condition validation</h2>
       <div className="disclaimer">
         This is model validation, not diagnosis. Candidate models are compared on the <strong>validation</strong>{" "}
         split; the chosen model is then evaluated <strong>once</strong> on a <strong>test</strong> split that was
@@ -123,6 +221,17 @@ export function Validation() {
             validation split ({ev.split.sizes?.val ?? "—"} records) at the 0.5 threshold. Selection rule from the
             training run: <em>{ev.selection_rule ?? "—"}</em>
           </p>
+          <div className="chart-card">
+            <GroupedBarChart
+              groups={(["accuracy", "precision", "recall_sensitivity", "f1", "roc_auc", "pr_auc"] as MetricKey[]).map((k) => ({
+                metric: k,
+                label: OVERVIEW_METRICS.find((m) => m.key === k)?.label ?? k,
+                values: Object.fromEntries(candidateRows.map(([name, m]) => [name, m[k] as number | null])),
+              }))}
+              series={candidateRows.map(([name]) => name)}
+              highlight={ev.selected_algorithm}
+            />
+          </div>
           <div className="table-scroll">
             <table>
               <thead>
@@ -272,7 +381,7 @@ export function Validation() {
                             <td>{humanizeLabel(f.feature)}</td>
                             <td className="mono">{fmt(f.importance, 4)} ± {fmt(f.std, 4)}</td>
                             <td style={{ width: "40%" }}>
-                              <div className="bar"><span style={{ width: `${Math.max(0, (f.importance / max) * 100)}%` }} /></div>
+                              <div className="hbar"><span style={{ width: `${Math.max(0, (f.importance / max) * 100)}%` }} /></div>
                             </td>
                           </tr>
                         );

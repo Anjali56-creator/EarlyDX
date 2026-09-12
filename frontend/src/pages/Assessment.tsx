@@ -65,6 +65,9 @@ export function Assessment() {
   }
 
   const complete = schema?.required_features.every((f) => !fieldInvalid(f)) ?? false;
+  const filled = schema ? schema.required_features.filter((f) => values[f] !== "" && values[f] != null).length : 0;
+  // guided-workflow stage: 0 condition · 1 information · 2 assessment (ready/running) · 3 result (on /results)
+  const stage = !selected || !schema ? 0 : busy ? 2 : complete ? 2 : 1;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -101,13 +104,28 @@ export function Assessment() {
 
   return (
     <>
+      <span className="eyebrow">Guided workflow</span>
       <h1>New Assessment</h1>
-      <p className="sub">Pick a condition, then enter only the values that condition's model needs.</p>
+      <p className="sub">Pick a condition, then enter only the values that condition's model needs. Fields change with the condition.</p>
+
+      <ol className="stepper" aria-label="Assessment progress">
+        {["Condition", "Information", "Assessment", "Result"].map((label, i) => (
+          <li key={label}>
+            <span className={`step ${i < stage ? "done" : ""} ${i === stage ? "current" : ""}`} aria-current={i === stage ? "step" : undefined}>
+              <span className="step-num">{i < stage ? "✓" : `0${i + 1}`}</span>
+              <span className="step-label">{label}</span>
+            </span>
+            {i < 3 && <span className="step-arrow" aria-hidden="true">→</span>}
+          </li>
+        ))}
+      </ol>
+
       <div className="disclaimer">
         This tool estimates risk from a statistical model. It does not diagnose disease and is not a
         substitute for a clinician.
       </div>
 
+      <h2>01 · Select a condition</h2>
       <div className="selector-card">
         <div className="field" style={{ marginBottom: 0 }}>
           <label htmlFor="disease">Condition</label>
@@ -145,7 +163,13 @@ export function Assessment() {
       {error && !schema && <ApiErrorBox message={error} onRetry={() => setSelected((s) => s + "")} />}
 
       {schema && (
-        <form onSubmit={submit} noValidate>
+        <form onSubmit={submit} noValidate className="fade-in" key={schema.model_id}>
+          <h2>02 · Enter the information this model needs</h2>
+          <p className="muted" style={{ marginBottom: 12 }}>
+            {filled} of {schema.required_features.length} fields filled · required inputs come from{" "}
+            <span className="mono">{schema.model_id}</span>'s feature schema; nothing else is collected.
+          </p>
+          <div className="form-card">
           <div className="form-grid">
             {schema.required_features.map((f) => {
               const d = schema.feature_details[f];
@@ -208,11 +232,18 @@ export function Assessment() {
               );
             })}
           </div>
-          <button type="submit" disabled={busy}>
-            {busy ? "Running assessment…" : "Submit Assessment"}
-          </button>
+          </div>
+          <h2>03 · Run the assessment</h2>
+          <div className="form-actions">
+            <button type="submit" disabled={busy}>
+              {busy ? <><span className="spinner" aria-hidden="true" /> Running assessment…</> : "Run Assessment →"}
+            </button>
+            <span className="muted">
+              {complete ? "All inputs valid — the model will score them and open the result." : "Complete every field with a valid value to enable the assessment."}
+            </span>
+          </div>
           {!complete && Object.keys(touched).length > 0 && (
-            <p className="muted" style={{ marginTop: 8 }}>Fill in every field with a valid value to run the assessment.</p>
+            <p className="field-error" style={{ marginTop: 8 }}>Some fields are missing or out of range — they are marked above.</p>
           )}
           {error && <p className="err" role="alert">{error}</p>}
         </form>

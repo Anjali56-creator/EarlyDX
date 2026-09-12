@@ -5,6 +5,7 @@ const API_BASE = (import.meta.env.VITE_API_BASE ?? "").replace(/\/+$/, "");
 export function About() {
   return (
     <>
+      <span className="eyebrow">Project</span>
       <h1>About EarlyDX</h1>
       <p className="sub">Objective, method, architecture, and what this system is not.</p>
 

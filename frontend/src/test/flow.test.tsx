@@ -109,10 +109,10 @@ test("select disease → enter data → submit → see prediction and explanatio
   await user.type(screen.getByLabelText(/BMI/), "45");
   await user.type(screen.getByLabelText(/Age/), "60");
 
-  await user.click(screen.getByRole("button", { name: /submit assessment/i }));
+  await user.click(screen.getByRole("button", { name: /run assessment/i }));
 
   // results page renders the risk level and the contributing factor
-  await waitFor(() => expect(screen.getByText(/HIGH RISK ESTIMATE/i)).toBeInTheDocument());
+  await waitFor(() => expect(screen.getAllByText(/HIGH RISK ESTIMATE/i).length).toBeGreaterThan(0));
   expect(screen.getAllByText(/Diabetes/).length).toBeGreaterThan(0);
   expect(screen.getByText("82%")).toBeInTheDocument();
   // submitted inputs are echoed back, and the top factor is listed with its method labelled honestly

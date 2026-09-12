@@ -29,6 +29,7 @@ export function Datasets() {
 
   return (
     <>
+      <span className="eyebrow">Dataset registry</span>
       <h1>Datasets</h1>
       <p className="sub">
         Every model is trained on a real, public, de-identified dataset. Values here were measured by{" "}

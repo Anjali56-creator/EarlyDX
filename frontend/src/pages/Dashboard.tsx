@@ -6,13 +6,49 @@ import type { DatasetEntry, DiseaseInfo, EvaluationSummary, Health, ModelEntry, 
 
 const fmt = (v: number | null | undefined, d = 3) => (v == null ? "—" : v.toFixed(d));
 
-const PIPELINE: { step: string; what: string; to: string }[] = [
-  { step: "Problem", what: "Early, transparent risk screening across 12 conditions — without pretending to diagnose.", to: "/about" },
-  { step: "Data", what: "Public, de-identified datasets with documented source, licence and limitations.", to: "/datasets" },
-  { step: "ML models", what: "One leakage-safe scikit-learn pipeline per condition; 3 algorithms compared per condition.", to: "/models" },
-  { step: "Evaluation", what: "Validation-split comparison, one held-out test, cross-validation, calibration.", to: "/validation" },
-  { step: "Risk prediction", what: "Score + validation-derived risk level from the selected, calibrated model.", to: "/assessment" },
-  { step: "Results", what: "Score, inputs, model reliance, and the model's own test metrics side by side.", to: "/results" },
+/* The research pipeline, expressed as data so each step can be selected and
+ * explained. Copy describes what the code in ml/common/framework.py does. */
+const PIPELINE: { step: string; short: string; detail: string; to: string; cta: string }[] = [
+  {
+    step: "Dataset",
+    short: "Public, de-identified data with documented provenance.",
+    detail:
+      "Each condition uses a real public dataset that is downloaded, sha256-verified and inspected before training. Source, licence, size, class balance, target definition and known limitations are recorded in the dataset registry — 'unknown' is never replaced with a guess.",
+    to: "/datasets",
+    cta: "Browse datasets",
+  },
+  {
+    step: "Preprocessing",
+    short: "Imputation, scaling, encoding — fitted on the training split only.",
+    detail:
+      "A stratified 60 / 20 / 20 train / validation / test split is made first. Every preprocessing step lives inside a scikit-learn Pipeline and is fitted on the training split alone, so no information from validation or test rows leaks into scaling, imputation or encoding.",
+    to: "/about",
+    cta: "Read the method",
+  },
+  {
+    step: "Model training",
+    short: "Three candidate algorithms, tuned with cross-validated grid search.",
+    detail:
+      "A LogisticRegression baseline is trained alongside RandomForest and GradientBoosting challengers. Each is tuned with GridSearchCV under stratified 5-fold cross-validation on the training split, then calibrated (none / sigmoid / isotonic) by validation Brier score.",
+    to: "/models",
+    cta: "See the models",
+  },
+  {
+    step: "Model comparison",
+    short: "Candidates compared on validation; the winner tested once.",
+    detail:
+      "Candidates are compared on the validation split. The interpretable baseline is kept unless a challenger beats it by at least 0.01 ROC-AUC. The selected model is evaluated exactly once on the held-out test split — accuracy, precision, recall, F1, ROC-AUC, PR-AUC and the confusion matrix are all stored.",
+    to: "/validation",
+    cta: "View model comparison",
+  },
+  {
+    step: "Risk assessment",
+    short: "Validated model → calibrated score → labelled risk level.",
+    detail:
+      "The deployed pipeline scores your inputs; validation-derived thresholds turn the score into LOW / MODERATE / HIGH. The result is shown next to the model's own test metrics and the inputs it relies on most, with the disclaimer that this is a statistical estimate, not a diagnosis.",
+    to: "/assessment",
+    cta: "Start an assessment",
+  },
 ];
 
 export function Dashboard() {
@@ -25,6 +61,7 @@ export function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [attempt, setAttempt] = useState(0);
+  const [step, setStep] = useState(3);
 
   useEffect(() => {
     setLoading(true);
@@ -35,195 +72,192 @@ export function Dashboard() {
       api.models(),
       api.datasets(),
       api.evaluationSummary().catch(() => ({ count: 0, models: [] as EvaluationSummary[] })),
-      api.recentAssessments(8).catch(() => null),
+      api.recentAssessments(6).catch(() => null),
     ])
       .then(([h, d, m, ds, ev, r]) => {
-        setHealth(h);
-        setDiseases(d.diseases);
-        setModels(m.models);
-        setDatasets(ds.datasets);
-        setEvals(ev.models);
-        setRecent(r);
+        setHealth(h); setDiseases(d.diseases); setModels(m.models); setDatasets(ds.datasets); setEvals(ev.models); setRecent(r);
       })
       .catch((e) => setError(String(e.message ?? e)))
       .finally(() => setLoading(false));
   }, [attempt]);
 
   const withModel = diseases.filter((d) => d.model_available).length;
+  const activeModels = models.filter((m) => m.status === "active");
+  const experimental = models.length - activeModels.length;
   const withoutModel = diseases.filter((d) => !d.model_available);
   const verifiedDatasets = datasets.filter((d) => d.status === "verified").length;
   const totalRecords = datasets.reduce((n, d) => n + (Number(d.records) || 0), 0);
-  const algorithms = Array.from(new Set(models.map((m) => m.algorithm))).sort();
   const baselineKept = evals.filter((e) => e.selected_algorithm === e.baseline_algorithm).length;
+  const candidatesCompared = evals.reduce((n, e) => n + e.candidates_compared.length, 0);
   const displayName = (key: string) => diseases.find((d) => d.key === key)?.display_name ?? key;
+  const bestByAuc = evals.length ? [...evals].sort((a, b) => (b.test_metrics.roc_auc ?? 0) - (a.test_metrics.roc_auc ?? 0)) : [];
+  const weakest = bestByAuc[bestByAuc.length - 1];
+  const P = PIPELINE[step];
 
   return (
     <>
-      <h1>EarlyDX — multi-disease early risk assessment</h1>
-      <p className="sub">
-        A research prototype that compares machine-learning classifiers per condition, deploys the best-justified
-        one, and shows every number it relies on.
-      </p>
-      <div className="disclaimer">
-        EarlyDX produces statistical risk estimates from public datasets. It is not a medical device, is not
-        clinically validated, and does not diagnose.
-      </div>
+      <section className="hero">
+        <span className="eyebrow">Research prototype · ML comparative analysis</span>
+        <h1>EarlyDX</h1>
+        <p className="hero-tagline">Multi-Disease Early Risk Assessment</p>
+        <p>
+          EarlyDX trains one independent, leakage-safe machine-learning pipeline per condition on public
+          de-identified datasets, compares candidate algorithms on held-out data, and serves the best-justified
+          model with every metric it relies on visible — a transparent alternative to single-number "disease
+          prediction" demos.
+        </p>
+        <div className="hero-actions">
+          <Link to="/assessment" className="btn-link">Start New Assessment</Link>
+          <Link to="/validation" className="btn-secondary">Explore Validation</Link>
+        </div>
+        <div className="hero-live" aria-live="polite">
+          <span className="pill">{health ? `API operational · ${health.models_loaded} models loaded` : error ? "API unreachable" : "Connecting to API…"}</span>
+          <span className="pill">Not a medical device · not a diagnosis</span>
+        </div>
+      </section>
 
       {error && <ApiErrorBox message={error} onRetry={() => setAttempt((a) => a + 1)} />}
-      {loading && !error && <Loading what="dashboard" />}
+      {loading && !error && <Loading what="live project data" />}
 
-      <div className="cta-card">
-        <div>
-          <div className="cta-title">Start a new assessment</div>
-          <p className="cta-sub">
-            Choose one of {withModel || "the"} supported conditions, enter only the inputs its model needs, and get a
-            calibrated risk score with the model's own validation metrics.
-          </p>
-        </div>
-        <Link to="/assessment" className="btn-link">New Assessment</Link>
+      <div className="grid">
+        <Link to="/diseases" className="card card-link">
+          <div className="k">Supported conditions</div>
+          <div className="v">{diseases.length ? `${withModel} / ${diseases.length}` : "—"}</div>
+          <div className="hint">{diseases.length ? `${withModel} with a trained model · ${withoutModel.length} documented as unavailable` : "loading…"}</div>
+        </Link>
+        <Link to="/models" className="card card-link">
+          <div className="k">Models</div>
+          <div className="v">{activeModels.length || "—"}</div>
+          <div className="hint">{evals.length ? `${candidatesCompared} candidates compared · baseline kept for ${baselineKept}${experimental ? ` · ${experimental} experimental, not promoted` : ""}` : "loading…"}</div>
+        </Link>
+        <Link to="/datasets" className="card card-link">
+          <div className="k">Datasets</div>
+          <div className="v">{verifiedDatasets || "—"}</div>
+          <div className="hint">{totalRecords ? `verified against source · ${totalRecords.toLocaleString()} records total` : "loading…"}</div>
+        </Link>
+        <Link to="/validation" className="card card-link">
+          <div className="k">Validation</div>
+          <div className="v">{evals.length ? `${evals.filter((e) => (e.test_metrics.roc_auc ?? 0) >= 0.9).length} / ${evals.length}` : "—"}</div>
+          <div className="hint">{evals.length ? "models with held-out test ROC-AUC ≥ 0.90" : "loading…"}</div>
+        </Link>
       </div>
 
       <h2>How EarlyDX works</h2>
-      <ol className="pipeline">
+      <p className="muted">Select a stage to see what actually happens there.</p>
+      <ol className="pipeline" role="tablist" aria-label="Research pipeline">
         {PIPELINE.map((p, i) => (
-          <li key={p.step}>
-            <Link to={p.to} className="pipeline-step">
+          <li key={p.step} role="presentation">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={i === step}
+              className={`pipeline-step ${i === step ? "active" : ""}`}
+              onClick={() => setStep(i)}
+            >
               <span className="pipeline-num">{i + 1}</span>
               <span className="pipeline-title">{p.step}</span>
-              <span className="pipeline-what">{p.what}</span>
-            </Link>
+              <span className="pipeline-what">{p.short}</span>
+            </button>
           </li>
         ))}
       </ol>
-
-      <h2>At a glance</h2>
-      <div className="grid">
-        <div className="card">
-          <div className="k">Conditions in scope</div>
-          <div className="v">{diseases.length || "—"}</div>
-          <div className="hint">{withModel} with a trained model · {withoutModel.length} documented as unavailable</div>
+      <div className="pipeline-detail fade-in" key={step} role="tabpanel">
+        <div>
+          <strong>{step + 1}. {P.step}</strong>
+          <p>{P.detail}</p>
         </div>
-        <div className="card">
-          <div className="k">Models served</div>
-          <div className="v">{health ? health.models_loaded : "—"}</div>
-          <div className="hint">{algorithms.length ? `Algorithms in use: ${algorithms.join(", ")}` : "—"}</div>
-        </div>
-        <div className="card">
-          <div className="k">Datasets</div>
-          <div className="v">{datasets.length || "—"}</div>
-          <div className="hint">
-            {verifiedDatasets} verified against source{totalRecords ? ` · ${totalRecords.toLocaleString()} records total` : ""}
-          </div>
-        </div>
-        <div className="card">
-          <div className="k">Candidates compared</div>
-          <div className="v">{evals.length ? evals.reduce((n, e) => n + e.candidates_compared.length, 0) : "—"}</div>
-          <div className="hint">
-            {evals.length ? `${evals.length} conditions × 3 algorithms · baseline kept for ${baselineKept}` : "—"}
-          </div>
-        </div>
+        <Link to={P.to} className="btn-secondary btn-sm">{P.cta} →</Link>
       </div>
 
-      <h2>Comparative model analysis</h2>
+      <h2>Research &amp; validation</h2>
       <p className="muted">
-        For each condition a LogisticRegression baseline was compared with tree-ensemble challengers on the
-        validation split; the winner was evaluated once on a held-out test split. Full tables, confusion matrices
-        and calibration on the <Link to="/validation">Validation page</Link>.
+        Held-out test results of the deployed model for each condition. Every number below was written by the
+        training run and is read verbatim from the API.
       </p>
-      <div className="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>Condition</th>
-              <th>Deployed model</th>
-              <th>Compared against</th>
-              <th title="held-out test split">Test ROC-AUC</th>
-              <th title="held-out test split">Recall</th>
-              <th title="held-out test split">F1</th>
-              <th>Calibration</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {evals.map((e) => (
-              <tr key={e.disease_key}>
-                <td>{e.disease}</td>
-                <td>
-                  <span className="mono">{e.selected_algorithm}</span>
-                  {e.selected_algorithm === e.baseline_algorithm && <span className="pill" style={{ marginLeft: 6 }}>baseline kept</span>}
-                </td>
-                <td className="muted">{e.candidates_compared.filter((c) => c !== e.selected_algorithm).join(", ")}</td>
-                <td>{fmt(e.test_metrics.roc_auc)}</td>
-                <td>{fmt(e.test_metrics.recall_sensitivity)}</td>
-                <td>{fmt(e.test_metrics.f1)}</td>
-                <td>{e.calibration_method ?? "—"}</td>
-                <td><Link to="/validation" className="details-link">Details</Link></td>
-              </tr>
-            ))}
-            {!loading && evals.length === 0 && (
-              <tr><td colSpan={8} className="muted">No evaluation data available from the API.</td></tr>
-            )}
-          </tbody>
-        </table>
+      <div className="two-col">
+        <div>
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr><th>Condition</th><th>Deployed model</th><th title="held-out test split">ROC-AUC</th><th title="held-out test split">Recall</th><th title="held-out test split">F1</th></tr>
+              </thead>
+              <tbody>
+                {bestByAuc.map((e) => (
+                  <tr key={e.disease_key}>
+                    <td>{e.disease}</td>
+                    <td className="mono">{e.selected_algorithm}{e.selected_algorithm === e.baseline_algorithm ? " ·baseline" : ""}</td>
+                    <td>{fmt(e.test_metrics.roc_auc)}</td>
+                    <td>{fmt(e.test_metrics.recall_sensitivity)}</td>
+                    <td>{fmt(e.test_metrics.f1)}</td>
+                  </tr>
+                ))}
+                {!loading && evals.length === 0 && <tr><td colSpan={5} className="muted">No evaluation data available from the API.</td></tr>}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <div className="callout" style={{ marginBottom: 12 }}>
+            <strong>What the comparison shows.</strong>{" "}
+            {evals.length ? (
+              <>
+                The LogisticRegression baseline was kept for {baselineKept} of {evals.length} conditions; a tree ensemble
+                won the rest. {bestByAuc[0]?.disease} has the highest test ROC-AUC ({fmt(bestByAuc[0]?.test_metrics.roc_auc)});{" "}
+                {weakest?.disease} the lowest ({fmt(weakest?.test_metrics.roc_auc)}) — kept for transparency, not merit.
+                Accuracy alone is not used for selection: for screening, recall and PR-AUC matter more.
+              </>
+            ) : "Loading…"}
+          </div>
+          <Link to="/validation" className="btn-link">View Model Comparison</Link>
+          {withoutModel.length > 0 && (
+            <p className="muted" style={{ marginTop: 14 }}>
+              <strong>Not modelled:</strong> {withoutModel.map((d) => d.display_name).join(", ")} — no dataset with
+              acceptable provenance or a rigorously defined target. Shown, not hidden.
+            </p>
+          )}
+        </div>
       </div>
 
-      {withoutModel.length > 0 && (
-        <div className="status-note">
-          <strong>Not modelled in this version:</strong>{" "}
-          {withoutModel.map((d) => `${d.display_name} — ${d.unavailable_reason ?? "no model"}`).join(" · ")}
+      <h2>Recent assessments</h2>
+      {recent?.available && recent.results.length > 0 ? (
+        <>
+          <p className="muted">{recent.total_sessions} assessment sessions stored on this deployment. Only condition, model, score and level are kept — inputs are never stored.</p>
+          <div className="table-scroll">
+            <table>
+              <thead><tr><th>When</th><th>Condition</th><th>Model</th><th>Score</th><th>Level</th></tr></thead>
+              <tbody>
+                {recent.results.map((r) => (
+                  <tr key={`${r.session_id}-${r.disease_key}`}>
+                    <td className="muted">{r.created_at ? new Date(r.created_at).toLocaleString() : "—"}</td>
+                    <td>{displayName(r.disease_key)}</td>
+                    <td className="mono">{r.model_id}</td>
+                    <td>{r.risk_score.toFixed(3)}</td>
+                    <td><span className={`pill ${r.risk_level === "LOW" ? "ok" : r.risk_level === "HIGH" ? "no" : ""}`}>{r.risk_level === "HIGH" ? "▲" : r.risk_level === "LOW" ? "▼" : "●"} {r.risk_level}</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      ) : (
+        <div className="empty-state">
+          <div className="empty-icon">◎</div>
+          {recent && !recent.available
+            ? "History is not persisted on this deployment (no database configured). Predictions still work."
+            : loading ? "Checking stored assessments…" : "No assessments have been recorded yet."}
+          <div style={{ marginTop: 12 }}><Link to="/assessment" className="btn-secondary btn-sm">Run the first assessment</Link></div>
         </div>
       )}
 
-      <div className="two-col" style={{ marginTop: 20 }}>
-        <div>
-          <h2>System status</h2>
-          <div className="status-panel">
-            <div className="status-row">
-              <span className="status-label">API</span>
-              <span className={`pill ${health ? "ok" : "no"}`}>{health ? "Operational" : error ? "Unreachable" : "…"}</span>
-            </div>
-            <div className="status-row">
-              <span className="status-label">Models loaded</span>
-              <span className={`pill ${health && health.models_loaded === models.length ? "ok" : "no"}`}>
-                {health?.models_loaded ?? "—"}/{models.length || "—"}
-              </span>
-            </div>
-            <div className="status-row">
-              <span className="status-label">Assessment history (database)</span>
-              <span className={`pill ${health?.database.available ? "ok" : "no"}`}>
-                {health ? (health.database.available ? "Operational" : "Unavailable — predictions still work") : "…"}
-              </span>
-            </div>
-          </div>
+      <div className="two-col" style={{ marginTop: 24 }}>
+        <div className="status-panel">
+          <div className="status-row"><span className="status-label">API</span><span className={`pill ${health ? "ok" : "no"}`}>{health ? "✓ Operational" : error ? "✕ Unreachable" : "…"}</span></div>
+          <div className="status-row"><span className="status-label">Models loaded</span><span className={`pill ${health && health.models_loaded === activeModels.length ? "ok" : "no"}`}>{health?.models_loaded ?? "—"} / {activeModels.length || "—"} active</span></div>
+          <div className="status-row"><span className="status-label">Assessment history (database)</span><span className={`pill ${health?.database.available ? "ok" : "no"}`}>{health ? (health.database.available ? "✓ Operational" : "Unavailable — predictions still work") : "…"}</span></div>
         </div>
-        <div>
-          <h2>Recent assessments</h2>
-          {recent?.available && recent.results.length > 0 ? (
-            <>
-              <p className="muted">{recent.total_sessions} assessment sessions stored. Only condition, model, score and level are kept — never inputs.</p>
-              <div className="table-scroll">
-                <table>
-                  <thead><tr><th>When</th><th>Condition</th><th>Score</th><th>Level</th></tr></thead>
-                  <tbody>
-                    {recent.results.map((r) => (
-                      <tr key={`${r.session_id}-${r.disease_key}`}>
-                        <td className="muted">{r.created_at ? new Date(r.created_at).toLocaleString() : "—"}</td>
-                        <td>{displayName(r.disease_key)}</td>
-                        <td>{r.risk_score.toFixed(3)}</td>
-                        <td><span className={`pill ${r.risk_level === "LOW" ? "ok" : "no"}`}>{r.risk_level}</span></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </>
-          ) : (
-            <p className="muted">
-              {recent && !recent.available
-                ? "No database is configured on this deployment, so history is not persisted."
-                : loading ? "…" : "No assessments have been stored yet."}
-            </p>
-          )}
+        <div className="disclaimer" style={{ alignSelf: "start" }}>
+          EarlyDX produces statistical risk estimates from public datasets. It is not a medical device, is not
+          clinically validated, and does not diagnose. Consult a qualified clinician for medical concerns.
         </div>
       </div>
     </>

@@ -47,6 +47,7 @@ export function Models() {
 
   return (
     <>
+      <span className="eyebrow">Model registry</span>
       <h1>Models</h1>
       <p className="sub">
         Every model version the API can serve. Each was selected from three candidates on a validation split and

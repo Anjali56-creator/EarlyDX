@@ -90,6 +90,7 @@ export interface ModelEntry {
   algorithm: string;
   dataset: string;
   training_date: string;
+  features?: string[];
   metrics: Record<string, number>;
   calibration: string;
   status: string;
@@ -103,9 +104,93 @@ export interface DatasetEntry {
   source_url: string;
   license: string;
   records: number;
+  features?: string[];
   target: string;
+  class_distribution?: Record<string, number>;
+  preprocessing?: string;
   status: string;
   limitations: string;
+}
+
+/** Standard binary-classification metrics at a fixed threshold, exactly as
+ * written to model_metadata.json by the training run. */
+export interface ClassificationMetrics {
+  n: number | null;
+  threshold: number | null;
+  accuracy: number | null;
+  precision: number | null;
+  recall_sensitivity: number | null;
+  specificity: number | null;
+  f1: number | null;
+  roc_auc: number | null;
+  pr_auc: number | null;
+  confusion_matrix: { tn: number; fp: number; fn: number; tp: number } | null;
+}
+
+export interface EvaluationSummary {
+  disease: string;
+  disease_key: string;
+  model_version: string;
+  selected_algorithm: string;
+  baseline_algorithm: string | null;
+  best_validation_candidate_by_roc_auc: string | null;
+  candidates_compared: string[];
+  test_metrics: Omit<ClassificationMetrics, "threshold" | "confusion_matrix">;
+  calibration_method: string | null;
+  cv_roc_auc: { mean: number; std: number } | null;
+}
+
+export interface EvaluationDetail {
+  disease: string;
+  disease_key: string;
+  model_version: string;
+  selected_algorithm: string;
+  baseline_algorithm: string | null;
+  selection_rule: string | null;
+  best_validation_candidate_by_roc_auc: string | null;
+  training_date: string | null;
+  dataset: { name?: string; registry_key?: string };
+  split: { scheme?: string; sizes?: { train: number; val: number; test: number } };
+  target_positive_rate: number | null;
+  candidates: Record<string, ClassificationMetrics>;
+  test_metrics: ClassificationMetrics & {
+    class_distribution: Record<string, number> | null;
+    brier: number | null;
+    calibration_bins:
+      | { bin: [number, number]; count: number; mean_predicted: number; observed_frequency: number }[]
+      | null;
+  };
+  test_metrics_at_screening_threshold: ClassificationMetrics | null;
+  cross_validation: {
+    folds: number | null;
+    summary: Record<string, { mean: number; std: number }> | null;
+  };
+  calibration: { method: string | null; validation_brier: Record<string, number> | null };
+  risk_thresholds: {
+    low_cut: number | null;
+    high_cut: number | null;
+    policy?: string;
+    target_sensitivity?: number;
+    target_specificity?: number;
+  } | null;
+  permutation_importance: { feature: string; importance: number; std: number }[] | null;
+  unavailable: Record<string, string>;
+  limitations: string | null;
+  ethical_note: string | null;
+  has_validation_samples: boolean;
+}
+
+export interface RecentAssessments {
+  available: boolean;
+  total_sessions: number;
+  results: {
+    session_id: number;
+    disease_key: string;
+    model_id: string;
+    risk_score: number;
+    risk_level: "LOW" | "MODERATE" | "HIGH";
+    created_at: string | null;
+  }[];
 }
 
 export interface Health {

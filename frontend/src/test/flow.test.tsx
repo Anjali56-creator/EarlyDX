@@ -113,9 +113,12 @@ test("select disease → enter data → submit → see prediction and explanatio
 
   // results page renders the risk level and the contributing factor
   await waitFor(() => expect(screen.getByText(/HIGH RISK ESTIMATE/i)).toBeInTheDocument());
-  expect(screen.getByText("Diabetes")).toBeInTheDocument();
+  expect(screen.getAllByText(/Diabetes/).length).toBeGreaterThan(0);
   expect(screen.getByText("82%")).toBeInTheDocument();
-  expect(screen.getByText(/Glucose/)).toBeInTheDocument();
+  // submitted inputs are echoed back, and the top factor is listed with its method labelled honestly
+  expect(screen.getAllByText(/Glucose/).length).toBeGreaterThanOrEqual(2);
+  expect(screen.getByText(/Your inputs/)).toBeInTheDocument();
+  expect(screen.getByText(/permutation importance/i)).toBeInTheDocument();
   expect(screen.getByText(/not a medical diagnosis/i)).toBeInTheDocument();
   expect(screen.getAllByText(/diabetes-v1/).length).toBeGreaterThan(0);
 });

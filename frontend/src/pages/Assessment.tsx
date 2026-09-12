@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, ApiError } from "../api/client";
+import { ApiErrorBox, Loading } from "../components/PageState";
 import type { DiseaseInfo, FeatureSchema } from "../types";
+import type { StoredInputs } from "./Results";
 import { humanizeLabel, humanizeOption } from "../utils/format";
 
 export function Assessment() {
@@ -12,15 +14,21 @@ export function Assessment() {
   const [values, setValues] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadingDiseases, setLoadingDiseases] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    setLoadingDiseases(true);
+    setLoadError(null);
     api.diseases().then((d) => {
       setDiseases(d.diseases);
       const first = d.diseases.find((x) => x.model_available);
-      if (first) setSelected(first.key);
-    }).catch((e) => setError(String(e.message ?? e)));
-  }, []);
+      if (first) setSelected((cur) => cur || first.key);
+    }).catch((e) => setLoadError(String(e.message ?? e)))
+      .finally(() => setLoadingDiseases(false));
+  }, [attempt]);
 
   useEffect(() => {
     if (!selected) return;
@@ -75,7 +83,13 @@ export function Assessment() {
         ]),
       );
       const result = await api.predict(schema.disease, features);
+      const stored: StoredInputs = {
+        disease_key: schema.disease,
+        values: features,
+        units: Object.fromEntries(schema.required_features.map((f) => [f, schema.feature_details[f].unit ?? ""])),
+      };
       sessionStorage.setItem("earlydx:lastResult", JSON.stringify(result));
+      sessionStorage.setItem("earlydx:lastInputs", JSON.stringify(stored));
       nav("/results");
     } catch (err) {
       const msg = err instanceof ApiError ? err.message : String(err);
@@ -87,7 +101,7 @@ export function Assessment() {
 
   return (
     <>
-      <h1>Assessment</h1>
+      <h1>New Assessment</h1>
       <p className="sub">Pick a condition, then enter only the values that condition's model needs.</p>
       <div className="disclaimer">
         This tool estimates risk from a statistical model. It does not diagnose disease and is not a
@@ -97,14 +111,27 @@ export function Assessment() {
       <div className="selector-card">
         <div className="field" style={{ marginBottom: 0 }}>
           <label htmlFor="disease">Condition</label>
-          <select id="disease" value={selected} onChange={(e) => setSelected(e.target.value)}>
+          <select
+            id="disease"
+            value={selected}
+            onChange={(e) => setSelected(e.target.value)}
+            disabled={loadingDiseases || !available.length}
+          >
+            {loadingDiseases && <option value="">Loading conditions…</option>}
+            {!loadingDiseases && !available.length && <option value="">No conditions available</option>}
             {available.map((d) => (
               <option key={d.key} value={d.key}>{d.display_name}</option>
             ))}
           </select>
         </div>
+        {loadError && <ApiErrorBox message={loadError} onRetry={() => setAttempt((a) => a + 1)} />}
+        {!loadingDiseases && !loadError && available.length === 0 && (
+          <p className="muted" style={{ marginTop: 8 }}>The API returned no conditions with a trained model.</p>
+        )}
         {selected && schema && (
-          <span className="pill ok" style={{ marginTop: 8, display: "inline-block" }}>Model available</span>
+          <span className="pill ok" style={{ marginTop: 8, display: "inline-block" }}>
+            Model available · {schema.required_features.length} inputs · <span className="mono">{schema.model_id}</span>
+          </span>
         )}
         {unavailable.length > 0 && (
           <div className="status-note">
@@ -112,6 +139,9 @@ export function Assessment() {
           </div>
         )}
       </div>
+
+      {selected && !schema && !error && <Loading what="the input form" />}
+      {error && !schema && <ApiErrorBox message={error} onRetry={() => setSelected((s) => s + "")} />}
 
       {schema && (
         <form onSubmit={submit} noValidate>
@@ -180,7 +210,10 @@ export function Assessment() {
           <button type="submit" disabled={busy}>
             {busy ? "Running assessment…" : "Submit Assessment"}
           </button>
-          {error && <p className="err">{error}</p>}
+          {!complete && Object.keys(touched).length > 0 && (
+            <p className="muted" style={{ marginTop: 8 }}>Fill in every field with a valid value to run the assessment.</p>
+          )}
+          {error && <p className="err" role="alert">{error}</p>}
         </form>
       )}
     </>

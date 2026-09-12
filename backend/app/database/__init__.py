@@ -172,6 +172,40 @@ def record_assessment(
         return None
 
 
+def recent_assessments(db: Session, *, limit: int = 10) -> dict[str, Any]:
+    """The most recent stored prediction results, newest first, plus the total
+    number of assessment sessions. Best-effort: returns an empty, flagged
+    payload if the database is unavailable rather than failing the request."""
+    if not DB_AVAILABLE:
+        return {"available": False, "total_sessions": 0, "results": []}
+    try:
+        total = db.query(AssessmentSession).count()
+        rows = (
+            db.query(PredictionResult)
+            .order_by(PredictionResult.created_at.desc(), PredictionResult.id.desc())
+            .limit(limit)
+            .all()
+        )
+        return {
+            "available": True,
+            "total_sessions": total,
+            "results": [
+                {
+                    "session_id": r.session_id,
+                    "disease_key": r.disease,
+                    "model_id": r.model_id,
+                    "risk_score": r.risk_score,
+                    "risk_level": r.risk_level,
+                    "created_at": r.created_at.isoformat() if r.created_at else None,
+                }
+                for r in rows
+            ],
+        }
+    except Exception as exc:  # noqa: BLE001
+        db.rollback()
+        return {"available": False, "total_sessions": 0, "results": [], "error": str(exc)}
+
+
 def sync_registries(db: Session, models: dict[str, Any], datasets: dict[str, Any]) -> None:
     if not DB_AVAILABLE:
         return

@@ -1,11 +1,14 @@
 import type {
   DatasetEntry,
   DiseaseInfo,
+  EvaluationDetail,
+  EvaluationSummary,
   FeatureSchema,
   Health,
   ModelEntry,
   PredictAllResponse,
   PredictionResponse,
+  RecentAssessments,
   ValidationSamples,
 } from "../types";
 
@@ -54,4 +57,7 @@ export const api = {
       body: JSON.stringify({ features }),
     }),
   validationSamples: (disease: string) => req<ValidationSamples>(`/validation/${disease}`),
+  evaluationSummary: () => req<{ count: number; models: EvaluationSummary[] }>("/evaluation"),
+  evaluation: (disease: string) => req<EvaluationDetail>(`/evaluation/${disease}`),
+  recentAssessments: (limit = 10) => req<RecentAssessments>(`/assessments/recent?limit=${limit}`),
 };

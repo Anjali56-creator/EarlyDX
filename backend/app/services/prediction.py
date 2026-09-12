@@ -42,6 +42,9 @@ def predict_one(disease: str, features: dict[str, float]) -> dict[str, Any]:
     score_field = "risk_score" if not bundle.calibrated else "calibrated_risk_score"
 
     metrics = bundle.registry_entry.get("metrics", {})
+    # standard classification metrics from the ONE held-out test evaluation
+    # recorded in model_metadata.json (same run the registry summarises)
+    test = bundle.metadata.get("test_metrics", {}) or {}
     return {
         "disease": display_name(disease),
         "disease_key": disease,
@@ -56,6 +59,9 @@ def predict_one(disease: str, features: dict[str, float]) -> dict[str, Any]:
             "test_pr_auc": metrics.get("test_pr_auc"),
             "test_recall_sensitivity": metrics.get("test_recall_sensitivity"),
             "test_specificity": metrics.get("test_specificity"),
+            "test_accuracy": metrics.get("test_accuracy", test.get("accuracy")),
+            "test_precision": test.get("precision"),
+            "test_f1": test.get("f1"),
             "cv_roc_auc_mean": metrics.get("cv_roc_auc_mean"),
         },
         "important_features": explain(bundle, features),

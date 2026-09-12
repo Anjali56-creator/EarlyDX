@@ -163,6 +163,7 @@ export interface EvaluationDetail {
   test_metrics_at_screening_threshold: ClassificationMetrics | null;
   cross_validation: {
     folds: number | null;
+    folds_requested?: number | null;
     summary: Record<string, { mean: number; std: number }> | null;
   };
   calibration: { method: string | null; validation_brier: Record<string, number> | null };

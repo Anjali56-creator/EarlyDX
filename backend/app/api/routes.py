@@ -202,7 +202,9 @@ def _evaluation_for(disease: str) -> dict[str, Any] | None:
             "test_metrics_at_low_threshold_screening"
         ),
         "cross_validation": {
-            "folds": cv.get("folds"),
+            # older runs wrote "folds"; newer runs write folds_requested/folds_scored
+            "folds": cv.get("folds", cv.get("folds_scored")),
+            "folds_requested": cv.get("folds_requested", cv.get("folds")),
             "summary": cv.get("summary"),
         },
         "calibration": {

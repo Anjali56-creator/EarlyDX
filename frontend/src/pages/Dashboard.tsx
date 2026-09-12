@@ -93,27 +93,73 @@ export function Dashboard() {
   const bestByAuc = evals.length ? [...evals].sort((a, b) => (b.test_metrics.roc_auc ?? 0) - (a.test_metrics.roc_auc ?? 0)) : [];
   const weakest = bestByAuc[bestByAuc.length - 1];
   const P = PIPELINE[step];
+  const algorithms = Array.from(new Set(evals.map((e) => e.selected_algorithm)));
+  const apiDown = !!error && !health;
 
   return (
     <>
       <section className="hero">
-        <span className="eyebrow">Research prototype · ML comparative analysis</span>
-        <h1>EarlyDX</h1>
-        <p className="hero-tagline">Multi-Disease Early Risk Assessment</p>
-        <p>
-          EarlyDX trains one independent, leakage-safe machine-learning pipeline per condition on public
-          de-identified datasets, compares candidate algorithms on held-out data, and serves the best-justified
-          model with every metric it relies on visible — a transparent alternative to single-number "disease
-          prediction" demos.
-        </p>
-        <div className="hero-actions">
-          <Link to="/assessment" className="btn-link">Start New Assessment</Link>
-          <Link to="/validation" className="btn-secondary">Explore Validation</Link>
+        <div className="hero-copy">
+          <span className="eyebrow">Research prototype · ML comparative analysis</span>
+          <h1>EarlyDX</h1>
+          <p className="hero-tagline">Multi-Disease Early Risk Assessment</p>
+          <p>
+            EarlyDX trains one independent, leakage-safe machine-learning pipeline per condition on public
+            de-identified datasets, compares candidate algorithms on held-out data, and serves the best-justified
+            model with every metric it relies on visible — a transparent alternative to single-number "disease
+            prediction" demos.
+          </p>
+          <div className="hero-actions">
+            <Link to="/assessment" className="btn-link">Start New Assessment</Link>
+            <Link to="/validation" className="btn-secondary">Explore Validation</Link>
+          </div>
+          <div className="hero-live" aria-live="polite">
+            <span className="pill">
+              {health ? `✓ API operational · ${health.models_loaded} models loaded` : apiDown ? "✕ API unreachable" : "Connecting to API…"}
+            </span>
+            <span className="pill">Not a medical device · not a diagnosis</span>
+          </div>
         </div>
-        <div className="hero-live" aria-live="polite">
-          <span className="pill">{health ? `API operational · ${health.models_loaded} models loaded` : error ? "API unreachable" : "Connecting to API…"}</span>
-          <span className="pill">Not a medical device · not a diagnosis</span>
-        </div>
+
+        {/* Right side: the ML pipeline, annotated with live figures from the API. */}
+        <aside className="hero-viz" aria-label="EarlyDX ML pipeline">
+          <div className="hero-viz-title">EarlyDX ML pipeline</div>
+          <ol className="viz-steps">
+            <li>
+              <span className="viz-k">Dataset</span>
+              <span className="viz-v">{verifiedDatasets ? `${verifiedDatasets} public datasets · ${totalRecords.toLocaleString()} records` : "public, de-identified datasets"}</span>
+            </li>
+            <li>
+              <span className="viz-k">Preprocessing</span>
+              <span className="viz-v">stratified 60 / 20 / 20 split · pipeline fitted on train only</span>
+            </li>
+            <li>
+              <span className="viz-k">Candidate models</span>
+              <span className="viz-v">{evals.length ? `${candidatesCompared} candidates · LogisticRegression baseline vs. tree ensembles` : "3 algorithms per condition"}</span>
+            </li>
+            <li>
+              <span className="viz-k">Model comparison</span>
+              <span className="viz-v">{evals.length ? `baseline kept ${baselineKept}× · ensemble promoted ${evals.length - baselineKept}× · one held-out test` : "validation split · ≥ 0.01 ROC-AUC rule"}</span>
+            </li>
+            <li>
+              <span className="viz-k">Risk assessment</span>
+              <span className="viz-v">{health ? `${health.models_loaded} models served · ${algorithms.length} algorithms in use` : "calibrated score → labelled level"}</span>
+            </li>
+          </ol>
+          {bestByAuc.length > 0 && (
+            <div className="viz-strip" aria-label="Held-out test ROC-AUC per deployed model">
+              <div className="viz-strip-title">Held-out test ROC-AUC · {bestByAuc.length} deployed models</div>
+              <div className="viz-bars">
+                {bestByAuc.map((e) => (
+                  <Link to="/validation" key={e.disease_key} className="viz-bar" title={`${e.disease}: ${fmt(e.test_metrics.roc_auc)} (${e.selected_algorithm})`}>
+                    <span style={{ height: `${Math.max(4, (e.test_metrics.roc_auc ?? 0) * 100)}%` }} />
+                  </Link>
+                ))}
+              </div>
+              <div className="viz-strip-foot"><span>{fmt(bestByAuc[0]?.test_metrics.roc_auc, 2)} {bestByAuc[0]?.disease}</span><span>{fmt(weakest?.test_metrics.roc_auc, 2)} {weakest?.disease}</span></div>
+            </div>
+          )}
+        </aside>
       </section>
 
       {error && <ApiErrorBox message={error} onRetry={() => setAttempt((a) => a + 1)} />}
@@ -123,22 +169,30 @@ export function Dashboard() {
         <Link to="/diseases" className="card card-link">
           <div className="k">Supported conditions</div>
           <div className="v">{diseases.length ? `${withModel} / ${diseases.length}` : "—"}</div>
-          <div className="hint">{diseases.length ? `${withModel} with a trained model · ${withoutModel.length} documented as unavailable` : "loading…"}</div>
+          <div className="hint">
+            {diseases.length ? <><strong>{withModel}</strong> conditions deployable with a trained model<br /><strong>{withoutModel.length}</strong> in scope but documented as unavailable</> : "loading…"}
+          </div>
         </Link>
         <Link to="/models" className="card card-link">
           <div className="k">Models</div>
           <div className="v">{activeModels.length || "—"}</div>
-          <div className="hint">{evals.length ? `${candidatesCompared} candidates compared · baseline kept for ${baselineKept}${experimental ? ` · ${experimental} experimental, not promoted` : ""}` : "loading…"}</div>
+          <div className="hint">
+            {evals.length ? <><strong>{activeModels.length}</strong> active models served by the API — one per condition<br />selected from <strong>{candidatesCompared}</strong> trained candidates{experimental ? ` · ${experimental} experimental, not promoted` : ""}</> : "loading…"}
+          </div>
         </Link>
         <Link to="/datasets" className="card card-link">
           <div className="k">Datasets</div>
           <div className="v">{verifiedDatasets || "—"}</div>
-          <div className="hint">{totalRecords ? `verified against source · ${totalRecords.toLocaleString()} records total` : "loading…"}</div>
+          <div className="hint">
+            {totalRecords ? <><strong>{verifiedDatasets}</strong> public datasets verified against source (sha256)<br /><strong>{totalRecords.toLocaleString()}</strong> records in total</> : "loading…"}
+          </div>
         </Link>
         <Link to="/validation" className="card card-link">
           <div className="k">Validation</div>
           <div className="v">{evals.length ? `${evals.filter((e) => (e.test_metrics.roc_auc ?? 0) >= 0.9).length} / ${evals.length}` : "—"}</div>
-          <div className="hint">{evals.length ? "models with held-out test ROC-AUC ≥ 0.90" : "loading…"}</div>
+          <div className="hint">
+            {evals.length ? <>models with held-out test ROC-AUC ≥ 0.90<br />(a display threshold — all {evals.length} were evaluated once on a held-out test split)</> : "loading…"}
+          </div>
         </Link>
       </div>
 
@@ -251,9 +305,9 @@ export function Dashboard() {
 
       <div className="two-col" style={{ marginTop: 24 }}>
         <div className="status-panel">
-          <div className="status-row"><span className="status-label">API</span><span className={`pill ${health ? "ok" : "no"}`}>{health ? "✓ Operational" : error ? "✕ Unreachable" : "…"}</span></div>
-          <div className="status-row"><span className="status-label">Models loaded</span><span className={`pill ${health && health.models_loaded === activeModels.length ? "ok" : "no"}`}>{health?.models_loaded ?? "—"} / {activeModels.length || "—"} active</span></div>
-          <div className="status-row"><span className="status-label">Assessment history (database)</span><span className={`pill ${health?.database.available ? "ok" : "no"}`}>{health ? (health.database.available ? "✓ Operational" : "Unavailable — predictions still work") : "…"}</span></div>
+          <div className="status-row"><span className="status-label">API <span className="muted">/health</span></span><span className={`pill ${health ? "ok" : "no"}`}>{health ? "✓ Operational" : apiDown ? "✕ Unreachable" : "… checking"}</span></div>
+          <div className="status-row"><span className="status-label">Models loaded</span><span className={`pill ${health && health.models_loaded === activeModels.length ? "ok" : "no"}`}>{health ? `${health.models_loaded} / ${activeModels.length} active${Object.keys(health.model_load_errors).length ? ` · ${Object.keys(health.model_load_errors).length} failed` : ""}` : apiDown ? "unknown — API unreachable" : "… checking"}</span></div>
+          <div className="status-row"><span className="status-label">Assessment history (database)</span><span className={`pill ${health?.database.available ? "ok" : "no"}`}>{health ? (health.database.available ? "✓ Operational" : "Degraded — predictions still work") : apiDown ? "unknown — API unreachable" : "… checking"}</span></div>
         </div>
         <div className="disclaimer" style={{ alignSelf: "start" }}>
           EarlyDX produces statistical risk estimates from public datasets. It is not a medical device, is not

@@ -191,6 +191,38 @@ export function Validation() {
         See the per-condition confusion matrices below for where each model actually errs.
       </div>
 
+      <h2>Evaluation methodology</h2>
+      <p className="muted">
+        How every number on this page was produced — from <span className="mono">ml/common/framework.py</span>,
+        <span className="mono"> ml/common/config.py</span> and each model's <span className="mono">model_metadata.json</span>.
+      </p>
+      <div className="method-grid">
+        <div className="card">
+          <div className="k">Data split</div>
+          <p>Stratified 60 / 20 / 20 train / validation / test, <span className="mono">random_state = 42</span>. The test split is created before any fitting and touched exactly once, for the final evaluation. Parkinson's is split and cross-validated <em>by subject</em> (grouped), because the dataset has several voice recordings per person.</p>
+        </div>
+        <div className="card">
+          <div className="k">Preprocessing &amp; leakage prevention</div>
+          <p>Median / most-frequent imputation, standard scaling and one-hot encoding live inside a scikit-learn <span className="mono">Pipeline</span>, so they are fitted on the training split only. Physiologically impossible zeros are converted to missing before imputation where the dataset encodes them that way (e.g. Diabetes).</p>
+        </div>
+        <div className="card">
+          <div className="k">Candidates &amp; tuning</div>
+          <p>LogisticRegression (baseline), RandomForest and GradientBoosting, each tuned with <span className="mono">GridSearchCV</span> (scoring = ROC-AUC) under stratified 5-fold cross-validation on the training split (4 grouped folds for Parkinson's).</p>
+        </div>
+        <div className="card">
+          <div className="k">Model selection criterion</div>
+          <p>Candidates are compared on the <strong>validation</strong> split. The baseline is kept unless a challenger's validation ROC-AUC exceeds it by at least <strong>0.01</strong> (<span className="mono">MIN_AUC_GAIN_OVER_BASELINE</span>). Calibration (none / sigmoid / isotonic) is chosen by validation Brier score.</p>
+        </div>
+        <div className="card">
+          <div className="k">Thresholds</div>
+          <p>Accuracy, precision, recall, specificity, F1 and the confusion matrix are reported at the fixed <strong>0.5</strong> threshold. The LOW / HIGH risk-level cut-offs used in the app are derived separately from validation sensitivity and specificity targets of 0.85 — not from the test split.</p>
+        </div>
+        <div className="card">
+          <div className="k">Metrics &amp; how to read them</div>
+          <p>ROC-AUC and PR-AUC are threshold-independent; PR-AUC is more informative under class imbalance. Test splits are small (43 – 423 records), so metrics carry wide confidence intervals: a <strong>1.000</strong> ROC-AUC on 43 or 80 rows (Thyroid, Kidney) reflects a small, well-separated dataset, not a clinically validated model. Permutation importance uses 10 repeats on the test split.</p>
+        </div>
+      </div>
+
       <h2 id="detail">Per-condition validation</h2>
       <div className="disclaimer">
         This is model validation, not diagnosis. Candidate models are compared on the <strong>validation</strong>{" "}
@@ -328,7 +360,7 @@ export function Validation() {
               <h3>Cross-validation &amp; calibration</h3>
               <table>
                 <tbody>
-                  <tr><th>CV folds</th><td>{ev.cross_validation.folds ?? "—"} (stratified, train split only)</td></tr>
+                  <tr><th>CV folds</th><td>{ev.cross_validation.folds ?? "—"}{ev.cross_validation.folds_requested && ev.cross_validation.folds_requested !== ev.cross_validation.folds ? ` of ${ev.cross_validation.folds_requested} requested` : ""} ({ev.split.scheme === "grouped" ? "grouped by subject" : "stratified"}, train split only)</td></tr>
                   <tr>
                     <th>CV ROC-AUC</th>
                     <td>

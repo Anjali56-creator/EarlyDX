@@ -22,10 +22,10 @@ services:
         value: production
       - key: EARLYDX_LOG_LEVEL
         value: INFO
-      # Set this to the deployed Vercel frontend's exact origin, e.g.
-      # https://earlydx.vercel.app -- no trailing slash, no wildcard.
+      # The deployed Vercel frontend's exact origin -- no trailing slash, no
+      # wildcard. Comma-separate to allow more than one origin.
       - key: EARLYDX_CORS_ORIGINS
-        sync: false
+        value: https://early-dx-2lr3-xi.vercel.app
       # Optional: only needed if you provision Postgres (see `databases:`
       # below, or Render's dashboard "Environment" tab).
       - key: EARLYDX_DATABASE_URL

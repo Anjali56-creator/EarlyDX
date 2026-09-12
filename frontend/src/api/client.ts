@@ -9,7 +9,11 @@ import type {
   ValidationSamples,
 } from "../types";
 
-const BASE = import.meta.env.VITE_API_BASE ?? "/api";
+// Production: VITE_API_BASE is the deployed backend origin (set at build time on
+// Vercel). Local dev: unset, so requests go to /api and the Vite proxy forwards
+// them to localhost:8000. Trailing slashes are stripped so a value like
+// "https://host/" doesn't produce "https://host//health" (a 404).
+const BASE = (import.meta.env.VITE_API_BASE ?? "/api").replace(/\/+$/, "");
 
 async function req<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {

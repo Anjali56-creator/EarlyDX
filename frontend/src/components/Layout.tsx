@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import { warmUp } from "../api/client";
 
 const navGroups: { heading: string; links: [string, string, boolean?][] }[] = [
   {
@@ -25,6 +27,8 @@ const navGroups: { heading: string; links: [string, string, boolean?][] }[] = [
 ];
 
 export function Layout() {
+  // wake the (free-tier, sleeping) API as soon as the shell renders
+  useEffect(() => { warmUp(); }, []);
   return (
     <div className="app">
       <aside className="sidebar">

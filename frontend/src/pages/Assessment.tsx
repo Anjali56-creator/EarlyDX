@@ -124,6 +124,7 @@ export function Assessment() {
             ))}
           </select>
         </div>
+        {loadingDiseases && <Loading what="conditions" />}
         {loadError && <ApiErrorBox message={loadError} onRetry={() => setAttempt((a) => a + 1)} />}
         {!loadingDiseases && !loadError && available.length === 0 && (
           <p className="muted" style={{ marginTop: 8 }}>The API returned no conditions with a trained model.</p>

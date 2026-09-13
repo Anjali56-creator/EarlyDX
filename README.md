@@ -35,30 +35,124 @@ Render API directly over HTTPS (see [Deployment](#deployment)).
 
 ---
 
-## Screenshots
+## How it works — at a glance
 
-| Dashboard | Assessment |
-|---|---|
-| ![Dashboard](docs/screenshots/dashboard.png) | ![Assessment](docs/screenshots/assessment.png) |
+```mermaid
+flowchart LR
+    A([Open the app]) --> B[Dashboard<br/>system status and summary]
+    B --> C[New Assessment<br/>pick a condition]
+    C --> D[Enter the values<br/>that model needs]
+    D -->|POST /predict/disease| E[(Trained model<br/>for that condition)]
+    E --> F[Results<br/>risk score · risk level · metrics]
+    F --> G[Validation<br/>how the model was chosen and tested]
+    F -.->|run another| C
+    B -.-> H[Conditions · Models · Datasets<br/>reference pages]
+```
 
-| Results | Validation |
-|---|---|
-| ![Results](docs/screenshots/results.png) | ![Validation](docs/screenshots/validation.png) |
+1. You choose **one condition** (for example Diabetes).
+2. The form shows **only the inputs that condition's model was trained on**, with plain-language labels and units.
+3. The backend runs the trained scikit-learn model for that condition and returns a **calibrated risk score**.
+4. The Results page shows the score, where it falls on the model's own risk bands, which inputs the model relies on most, and the model's **real test-set performance**.
+5. The Validation page lets you check *how* that model was chosen against alternatives and how it behaved on data it never saw.
+
+---
+
+## Application walkthrough
+
+Every screenshot below was captured from the app running end to end — the numbers in
+them are the real outputs of the training runs, read from the API.
+
+### 1 · Dashboard — the overview
+
+![Dashboard](docs/screenshots/dashboard-top.png)
+
+The landing page. From top to bottom it shows:
+
+- **Hero card** — what EarlyDX is, and a live pipeline summary (10 datasets · 5,870 records · 30 trained candidates · 10 deployed models) with a mini bar chart of every deployed model's held-out ROC-AUC.
+- **Status tiles** — supported conditions (10 / 12), models served, datasets verified against their source checksum, and how many models reach the ≥ 0.90 ROC-AUC display threshold.
+- **"How EarlyDX works"** — a clickable 5-stage pipeline (Dataset → Preprocessing → Model training → Model comparison → Risk assessment). Clicking a stage explains exactly what happens there.
+- **Research & validation table** — deployed algorithm, ROC-AUC, recall and F1 for each condition, plus which conditions are *not* modelled and why.
+- **Recent assessments** and **system status** (API health, models loaded, database) — inputs are never stored, only condition, model, score and level.
 
 <details>
-<summary>More screenshots — Diseases, Models, Datasets</summary>
+<summary>Full-length dashboard screenshot</summary>
 
-| Diseases | Models |
-|---|---|
-| ![Diseases](docs/screenshots/diseases.png) | ![Models](docs/screenshots/models.png) |
-
-![Datasets](docs/screenshots/datasets.png)
+![Dashboard – full page](docs/screenshots/dashboard.png)
 
 </details>
 
-All screenshots above are from the app actually running end to end — the Results page
-shows a real prediction for the diabetes model, and the Validation page shows the
-model's real held-out test-set predictions against their known labels.
+### 2 · New Assessment — choose a condition, enter its inputs
+
+![Assessment](docs/screenshots/assessment.png)
+
+A guided four-step workflow (**Condition → Information → Assessment → Result**):
+
+- The **Condition** dropdown lists the 10 conditions with a trained model; the 2 without one are listed separately with the real reason.
+- The form is **generated from that model's feature schema** — Diabetes asks for 8 values, Breast Cancer for 30, Maternal Health for 6. Each field shows its unit and valid range, and the raw feature name the model trained on stays unchanged underneath.
+- Nothing is silently defaulted: a missing or out-of-range medical value blocks submission and is highlighted. (`0` is accepted only where the dataset itself used 0 to mean "not measured".)
+- Submitting calls `POST /predict/{disease}` and navigates to Results.
+
+### 3 · Results — the risk estimate, with provenance
+
+![Results](docs/screenshots/results.png)
+
+The output for one assessment (here: the Diabetes model, RandomForest, calibrated score 0.82):
+
+- **Headline card** — risk level (LOW / MODERATE / HIGH), calibrated probability, and the model that produced it.
+- **Prediction summary + your inputs** — the exact values you entered, echoed back with units.
+- **Where the score falls** — the LOW / MODERATE / HIGH bands come from *this model's own validation run* (thresholds that reached sensitivity / specificity ≥ 0.85), not from clinical guidelines. The policy is printed in full.
+- **Inputs the model relies on most** — global permutation importance combined with where your value sits against the training population's median. Labelled honestly as a *global* explanation, not a per-case causal one.
+- **How reliable is this model?** — ROC-AUC, PR-AUC, accuracy, precision, recall, specificity, F1 and cross-validated ROC-AUC on the held-out test set, with a link to the full validation.
+
+### 4 · Validation — how each model was chosen and tested
+
+![Validation](docs/screenshots/validation-top.png)
+
+The research heart of the app. For **all conditions** it shows a ranked bar chart of any metric (ROC-AUC, F1, accuracy, recall, precision, PR-AUC) and a comparison table of every deployed model. Then, for the selected condition:
+
+1. **Which model performs best — and which one was chosen.** The three candidate algorithms side by side on the validation split, the selection verdict, and *why* (the interpretable baseline is kept unless a challenger beats it by ≥ 0.01 ROC-AUC).
+2. **Held-out test performance of the deployed model** — metrics, confusion matrix, cross-validation mean ± std, calibration method chosen by Brier score, decision thresholds, and permutation importance.
+3. **Individual held-out records** — real test-set rows with their true label vs. the model's prediction, so correct and incorrect classifications are visible one by one.
+
+An **Evaluation methodology** panel explains the data split, leakage prevention, candidates & tuning, selection criterion, thresholds and how to read the metrics.
+
+<details>
+<summary>Full-length validation screenshot (Diabetes selected)</summary>
+
+![Validation – full page](docs/screenshots/validation.png)
+
+</details>
+
+### 5 · Conditions — what each model needs
+
+![Conditions](docs/screenshots/diseases-top.png)
+
+The 12 in-scope conditions grouped by clinical area (cardiovascular, endocrine, hepatic, metabolic, neurological, obstetric, oncology, renal). Each card lists the deployed model and its test ROC-AUC, the **exact required inputs**, the training dataset, and the target definition (e.g. *Heart Disease: target = angiographic heart disease present, num > 0*). Stroke and Hypertension are shown as **Unavailable** with the reason instead of being hidden.
+
+<details>
+<summary>Full-length conditions screenshot</summary>
+
+![Conditions – full page](docs/screenshots/diseases.png)
+
+</details>
+
+### 6 · Models — the model registry
+
+![Models](docs/screenshots/models.png)
+
+Every model version the API can serve, straight from `models/model_registry.json`: condition, algorithm, held-out accuracy / precision / recall / F1 / ROC-AUC, calibration method and load status. The experimental `diabetes-v2` candidate is listed too — it scored slightly worse on the test set and was **not** promoted, but it stays in the registry rather than being hidden. Each row expands into full model details (candidates compared, hyperparameters, training date).
+
+### 7 · Datasets — provenance and limitations
+
+![Datasets](docs/screenshots/datasets.png)
+
+Every dataset behind a model: record count, positive-class balance, number of features, source, licence and verification status (`verified` = the downloaded file matched its sha256; `unknown` is shown rather than guessed). The summary tiles (12 datasets · 5,870 records · smallest 195 / largest 2,111) make the small-data caveat visible. Each row expands into the target definition, input features and the preprocessing applied inside the pipeline. Documented biases and limitations live in [`DATASETS.md`](DATASETS.md) and [`LIMITATIONS.md`](LIMITATIONS.md).
+
+### 8 · About — scope and disclaimer
+
+![About](docs/screenshots/about.png)
+
+The project on one page: objective, problem statement, the 9-step ML approach (dataset → preprocessing → split → candidates → selection → calibration → thresholds → evaluation → deployment), the architecture and API boundary, the technology stack, limitations, and what EarlyDX is **not** (not a medical device, not clinically validated, not a diagnosis).
 
 ---
 
@@ -226,14 +320,13 @@ frontend/      React + TypeScript — dashboard, assessment, results, conditions
                models, datasets, validation & model comparison, about
 ```
 
-```
- Browser  ──►  React/Vite frontend  ──►  FastAPI backend  ──►  trained sklearn
-(Vercel)                                    (Render)            pipeline (.joblib)
-                                                │
-                                                ▼
-                                     SQLite (dev) / Postgres (optional, prod)
-                                     — best-effort assessment history only;
-                                       predictions work with or without it
+```mermaid
+flowchart LR
+    U[Browser] -->|HTTPS| FE[React + TypeScript frontend<br/>static Vite build · Vercel]
+    FE -->|JSON over HTTPS<br/>VITE_API_BASE| API[FastAPI backend<br/>Python 3.11 · Render]
+    API --> M[(10 trained scikit-learn<br/>pipelines · models/*.joblib)]
+    API --> META[(Stored training metadata<br/>ml/disease/model_metadata.json)]
+    API -.->|best-effort history<br/>inputs never stored| DB[(SQLite dev /<br/>PostgreSQL optional)]
 ```
 
 ### Frontend ↔ backend flow
@@ -249,14 +342,56 @@ frontend/      React + TypeScript — dashboard, assessment, results, conditions
 4. The backend's CORS allow-list (`EARLYDX_CORS_ORIGINS`) permits only the deployed
    frontend origin(s) in production.
 
+What one assessment looks like on the wire:
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant FE as Frontend (Vercel)
+    participant API as FastAPI (Render)
+    participant ML as sklearn pipeline
+    participant DB as Database (optional)
+
+    User->>FE: open /assessment
+    FE->>API: GET /diseases
+    API-->>FE: 12 conditions + model availability
+    User->>FE: select "Diabetes"
+    FE->>API: GET /schema/diabetes
+    API-->>FE: 8 required features, units, ranges
+    User->>FE: fill in values, submit
+    FE->>API: POST /predict/diabetes {features}
+    API->>API: validate against schema (no defaults)
+    API->>ML: predict_proba(features)
+    ML-->>API: calibrated probability
+    API->>API: map to LOW / MODERATE / HIGH<br/>using validation-derived thresholds
+    API-)DB: store condition, model, score, level (never inputs)
+    API-->>FE: score, level, metrics, contributing factors
+    FE-->>User: Results page
+```
+
 Full detail: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ### Research pipeline
 
-```
-Dataset → Preprocessing → Feature schema → Candidate training (GridSearchCV)
-        → Validation-split comparison → Model selection → Calibration → Thresholds
-        → ONE held-out test evaluation → Serialise + register → Deploy → Risk prediction
+```mermaid
+flowchart TD
+    D[(Public dataset<br/>verified by sha256)] --> V[Validate and load]
+    V --> S[Stratified split<br/>60 % train · 20 % validation · 20 % test]
+    S --> P[Preprocessing pipeline<br/>impute · scale · encode<br/><i>fitted on train only</i>]
+    P --> H[Hyperparameter search<br/>GridSearchCV · StratifiedKFold<br/>on the train split]
+    H --> C{Compare on<br/>validation split}
+    C -->|LogisticRegression baseline| K[Keep baseline]
+    C -->|challenger beats it by ≥ 0.01 ROC-AUC| W[Promote RandomForest /<br/>GradientBoosting]
+    K --> CV[Cross-validate selected model]
+    W --> CV
+    CV --> CAL[Choose calibration<br/>none · sigmoid · isotonic<br/>by validation Brier score]
+    CAL --> TH[Derive LOW / HIGH thresholds<br/>from validation sensitivity and specificity]
+    TH --> T[[ONE held-out test evaluation<br/>accuracy · recall · F1 · ROC-AUC · PR-AUC<br/>confusion matrix]]
+    T --> PI[Permutation importance +<br/>bounded held-out sample]
+    PI --> A[(Serialise .joblib +<br/>feature schema + metadata +<br/>registry entry)]
+    A --> API[Served by FastAPI →<br/>risk prediction in the app]
+
+    style T fill:#fde2f3,stroke:#c0397f,stroke-width:2px
 ```
 
 Every disease follows the identical, leakage-audited sequence in
@@ -292,11 +427,12 @@ promoted (e.g. `diabetes-v2`) are intentionally left out of git via `.gitignore`
 
 The production app uses the standard static-frontend / API-backend split:
 
-```
-Frontend  →  Vercel   https://early-dx.vercel.app
-             (frontend/vercel.json — Vite build, SPA rewrite for client-side routing)
-Backend   →  Render   https://earlydx-api.onrender.com
-             (render.yaml — Blueprint: build/start commands, /health check, env vars)
+```mermaid
+flowchart LR
+    GH[GitHub repo<br/>main branch] -->|frontend/ · vercel.json| VC[Vercel<br/>Vite build → static site<br/>early-dx.vercel.app]
+    GH -->|render.yaml · backend/ · models/| RN[Render<br/>uvicorn backend.app.main:app<br/>earlydx-api.onrender.com]
+    VC -->|calls API directly<br/>VITE_API_BASE| RN
+    RN -->|CORS allow-list<br/>EARLYDX_CORS_ORIGINS| VC
 ```
 
 **Vercel** — import the repo, set *Root Directory* to `frontend` (framework: Vite), and

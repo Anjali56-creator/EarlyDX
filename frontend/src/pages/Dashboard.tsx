@@ -4,7 +4,6 @@ import { api } from "../api/client";
 import { ApiErrorBox, Loading } from "../components/PageState";
 import type { DatasetEntry, DiseaseInfo, EvaluationSummary, Health, ModelEntry, RecentAssessments } from "../types";
 
-const fmt = (v: number | null | undefined, d = 3) => (v == null ? "—" : v.toFixed(d));
 
 /* The research pipeline, expressed as data so each step can be selected and
  * explained. Copy describes what the code in ml/common/framework.py does. */
@@ -26,22 +25,6 @@ const PIPELINE: { step: string; short: string; detail: string; to: string; cta: 
     cta: "Read the method",
   },
   {
-    step: "Model training",
-    short: "Three candidate algorithms, tuned with cross-validated grid search.",
-    detail:
-      "A LogisticRegression baseline is trained alongside RandomForest and GradientBoosting challengers. Each is tuned with GridSearchCV under stratified 5-fold cross-validation on the training split, then calibrated (none / sigmoid / isotonic) by validation Brier score.",
-    to: "/models",
-    cta: "See the models",
-  },
-  {
-    step: "Model comparison",
-    short: "Candidates compared on validation; the winner tested once.",
-    detail:
-      "Candidates are compared on the validation split. The interpretable baseline is kept unless a challenger beats it by at least 0.01 ROC-AUC. The selected model is evaluated exactly once on the held-out test split — accuracy, precision, recall, F1, ROC-AUC, PR-AUC and the confusion matrix are all stored.",
-    to: "/validation",
-    cta: "View model comparison",
-  },
-  {
     step: "Risk assessment",
     short: "Validated model → calibrated score → labelled risk level.",
     detail:
@@ -61,7 +44,7 @@ export function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [attempt, setAttempt] = useState(0);
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(2);
 
   useEffect(() => {
     setLoading(true);
@@ -87,13 +70,9 @@ export function Dashboard() {
   const withoutModel = diseases.filter((d) => !d.model_available);
   const verifiedDatasets = datasets.filter((d) => d.status === "verified").length;
   const totalRecords = datasets.reduce((n, d) => n + (Number(d.records) || 0), 0);
-  const baselineKept = evals.filter((e) => e.selected_algorithm === e.baseline_algorithm).length;
   const candidatesCompared = evals.reduce((n, e) => n + e.candidates_compared.length, 0);
   const displayName = (key: string) => diseases.find((d) => d.key === key)?.display_name ?? key;
-  const bestByAuc = evals.length ? [...evals].sort((a, b) => (b.test_metrics.roc_auc ?? 0) - (a.test_metrics.roc_auc ?? 0)) : [];
-  const weakest = bestByAuc[bestByAuc.length - 1];
   const P = PIPELINE[step];
-  const algorithms = Array.from(new Set(evals.map((e) => e.selected_algorithm)));
   const apiDown = !!error && !health;
 
   return (
@@ -111,7 +90,6 @@ export function Dashboard() {
           </p>
           <div className="hero-actions">
             <Link to="/assessment" className="btn-link">Start New Assessment</Link>
-            <Link to="/validation" className="btn-secondary">Explore Validation</Link>
           </div>
           <div className="hero-live" aria-live="polite">
             <span className="pill">
@@ -134,31 +112,10 @@ export function Dashboard() {
               <span className="viz-v">stratified 60 / 20 / 20 split · pipeline fitted on train only</span>
             </li>
             <li>
-              <span className="viz-k">Candidate models</span>
-              <span className="viz-v">{evals.length ? `${candidatesCompared} candidates · LogisticRegression baseline vs. tree ensembles` : "3 algorithms per condition"}</span>
-            </li>
-            <li>
-              <span className="viz-k">Model comparison</span>
-              <span className="viz-v">{evals.length ? `baseline kept ${baselineKept}× · ensemble promoted ${evals.length - baselineKept}× · one held-out test` : "validation split · ≥ 0.01 ROC-AUC rule"}</span>
-            </li>
-            <li>
               <span className="viz-k">Risk assessment</span>
-              <span className="viz-v">{health ? `${health.models_loaded} models served · ${algorithms.length} algorithms in use` : "calibrated score → labelled level"}</span>
+              <span className="viz-v">{health ? `${health.models_loaded} conditions available` : "calibrated score → labelled level"}</span>
             </li>
           </ol>
-          {bestByAuc.length > 0 && (
-            <div className="viz-strip" aria-label="Held-out test ROC-AUC per deployed model">
-              <div className="viz-strip-title">Held-out test ROC-AUC · {bestByAuc.length} deployed models</div>
-              <div className="viz-bars">
-                {bestByAuc.map((e) => (
-                  <Link to="/validation" key={e.disease_key} className="viz-bar" title={`${e.disease}: ${fmt(e.test_metrics.roc_auc)} (${e.selected_algorithm})`}>
-                    <span style={{ height: `${Math.max(4, (e.test_metrics.roc_auc ?? 0) * 100)}%` }} />
-                  </Link>
-                ))}
-              </div>
-              <div className="viz-strip-foot"><span>{fmt(bestByAuc[0]?.test_metrics.roc_auc, 2)} {bestByAuc[0]?.disease}</span><span>{fmt(weakest?.test_metrics.roc_auc, 2)} {weakest?.disease}</span></div>
-            </div>
-          )}
         </aside>
       </section>
 
@@ -185,13 +142,6 @@ export function Dashboard() {
           <div className="v">{verifiedDatasets || "—"}</div>
           <div className="hint">
             {totalRecords ? <><strong>{verifiedDatasets}</strong> public datasets verified against source (sha256)<br /><strong>{totalRecords.toLocaleString()}</strong> records in total</> : "loading…"}
-          </div>
-        </Link>
-        <Link to="/validation" className="card card-link">
-          <div className="k">Validation</div>
-          <div className="v">{evals.length ? `${evals.filter((e) => (e.test_metrics.roc_auc ?? 0) >= 0.9).length} / ${evals.length}` : "—"}</div>
-          <div className="hint">
-            {evals.length ? <>models with held-out test ROC-AUC ≥ 0.90<br />(a display threshold — all {evals.length} were evaluated once on a held-out test split)</> : "loading…"}
           </div>
         </Link>
       </div>
@@ -221,55 +171,6 @@ export function Dashboard() {
           <p>{P.detail}</p>
         </div>
         <Link to={P.to} className="btn-secondary btn-sm">{P.cta} →</Link>
-      </div>
-
-      <h2>Research &amp; validation</h2>
-      <p className="muted">
-        Held-out test results of the deployed model for each condition. Every number below was written by the
-        training run and is read verbatim from the API.
-      </p>
-      <div className="two-col">
-        <div>
-          <div className="table-scroll">
-            <table>
-              <thead>
-                <tr><th>Condition</th><th>Deployed model</th><th title="held-out test split">ROC-AUC</th><th title="held-out test split">Recall</th><th title="held-out test split">F1</th></tr>
-              </thead>
-              <tbody>
-                {bestByAuc.map((e) => (
-                  <tr key={e.disease_key}>
-                    <td>{e.disease}</td>
-                    <td className="mono">{e.selected_algorithm}{e.selected_algorithm === e.baseline_algorithm ? " ·baseline" : ""}</td>
-                    <td>{fmt(e.test_metrics.roc_auc)}</td>
-                    <td>{fmt(e.test_metrics.recall_sensitivity)}</td>
-                    <td>{fmt(e.test_metrics.f1)}</td>
-                  </tr>
-                ))}
-                {!loading && evals.length === 0 && <tr><td colSpan={5} className="muted">No evaluation data available from the API.</td></tr>}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div>
-          <div className="callout" style={{ marginBottom: 12 }}>
-            <strong>What the comparison shows.</strong>{" "}
-            {evals.length ? (
-              <>
-                The LogisticRegression baseline was kept for {baselineKept} of {evals.length} conditions; a tree ensemble
-                won the rest. {bestByAuc[0]?.disease} has the highest test ROC-AUC ({fmt(bestByAuc[0]?.test_metrics.roc_auc)});{" "}
-                {weakest?.disease} the lowest ({fmt(weakest?.test_metrics.roc_auc)}) — kept for transparency, not merit.
-                Accuracy alone is not used for selection: for screening, recall and PR-AUC matter more.
-              </>
-            ) : "Loading…"}
-          </div>
-          <Link to="/validation" className="btn-link">View Model Comparison</Link>
-          {withoutModel.length > 0 && (
-            <p className="muted" style={{ marginTop: 14 }}>
-              <strong>Not modelled:</strong> {withoutModel.map((d) => d.display_name).join(", ")} — no dataset with
-              acceptable provenance or a rigorously defined target. Shown, not hidden.
-            </p>
-          )}
-        </div>
       </div>
 
       <h2>Recent assessments</h2>

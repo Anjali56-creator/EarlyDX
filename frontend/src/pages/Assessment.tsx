@@ -106,7 +106,7 @@ export function Assessment() {
     <>
       <span className="eyebrow">Guided workflow</span>
       <h1>New Assessment</h1>
-      <p className="sub">Pick a condition, then enter only the values that condition's model needs. Fields change with the condition.</p>
+      <p className="sub">Pick a condition, then enter only the values that condition needs. Fields change with the condition.</p>
 
       <ol className="stepper" aria-label="Assessment progress">
         {["Condition", "Information", "Assessment", "Result"].map((label, i) => (
@@ -121,7 +121,7 @@ export function Assessment() {
       </ol>
 
       <div className="disclaimer">
-        This tool estimates risk from a statistical model. It does not diagnose disease and is not a
+        This tool provides a risk estimate only. It does not diagnose disease and is not a
         substitute for a clinician.
       </div>
 
@@ -149,7 +149,7 @@ export function Assessment() {
         )}
         {selected && schema && (
           <span className="pill ok" style={{ marginTop: 8, display: "inline-block" }}>
-            Model available · {schema.required_features.length} inputs · <span className="mono">{schema.model_id}</span>
+            {schema.required_features.length} inputs needed
           </span>
         )}
         {unavailable.length > 0 && (
@@ -164,10 +164,9 @@ export function Assessment() {
 
       {schema && (
         <form onSubmit={submit} noValidate className="fade-in" key={schema.model_id}>
-          <h2>02 · Enter the information this model needs</h2>
+          <h2>02 · Enter your information</h2>
           <p className="muted" style={{ marginBottom: 12 }}>
-            {filled} of {schema.required_features.length} fields filled · required inputs come from{" "}
-            <span className="mono">{schema.model_id}</span>'s feature schema; nothing else is collected.
+            {filled} of {schema.required_features.length} fields filled · nothing else is collected.
           </p>
           <div className="form-card">
           <div className="form-grid">
@@ -179,10 +178,14 @@ export function Assessment() {
                   <label htmlFor={f}>
                     {humanizeLabel(f)} <span className="req-mark" aria-hidden="true">*</span>
                   </label>
-                  {d.unit && <div className="field-desc">{d.unit}</div>}
-                  {d.zero_is_missing && (
+                  {f === "Pregnancies" ? (
+                    <div className="field-desc">Enter the number of times you have been pregnant.</div>
+                  ) : (
+                    d.unit && <div className="field-desc">{d.unit}</div>
+                  )}
+                  {d.zero_is_missing && f !== "Pregnancies" && (
                     <div className="field-desc">
-                      Enter 0 if this was not measured — the model treats 0 as missing and imputes it.
+                      Enter 0 if this was not measured.
                     </div>
                   )}
                   {d.type === "categorical" ? (
@@ -239,7 +242,7 @@ export function Assessment() {
               {busy ? <><span className="spinner" aria-hidden="true" /> Running assessment…</> : "Run Assessment →"}
             </button>
             <span className="muted">
-              {complete ? "All inputs valid — the model will score them and open the result." : "Complete every field with a valid value to enable the assessment."}
+              {complete ? "All inputs valid — ready to get your result." : "Complete every field with a valid value to enable the assessment."}
             </span>
           </div>
           {!complete && Object.keys(touched).length > 0 && (

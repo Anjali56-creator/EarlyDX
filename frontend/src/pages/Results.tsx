@@ -18,7 +18,6 @@ function load<T>(key: string): T | null {
   }
 }
 
-const fmt = (v: number | null | undefined, d = 3) => (v == null ? "—" : Number(v).toFixed(d));
 
 export function Results() {
   const result = load<PredictionResponse>("earlydx:lastResult");
@@ -40,7 +39,6 @@ export function Results() {
     );
   }
 
-  const perf = result.model_performance;
   const thresholds = result.risk_thresholds;
   const hasZone = thresholds?.low_cut != null && thresholds?.high_cut != null;
   const inputsMatch = inputs && inputs.disease_key === result.disease_key;
@@ -51,8 +49,7 @@ export function Results() {
       <span className="eyebrow">Step 04 · Result</span>
       <h1>Risk Assessment</h1>
       <p className="sub">
-        Output of the <span className="mono">{result.model_version}</span> model for {result.disease}. A
-        model-based estimate, not a diagnosis.
+        Risk estimate for {result.disease}. An estimate only, not a diagnosis.
       </p>
 
       <RiskBadge result={result} />
@@ -69,7 +66,6 @@ export function Results() {
           <div className="v">{pctScore}%</div>
           <div className="hint">{result.calibrated ? "calibrated risk score" : "uncalibrated ranking score"}</div>
         </div>
-        <div className="card"><div className="k">Model</div><div className="v mono" style={{ fontSize: 15 }}>{result.model_version}</div><div className="hint">{result.model_algorithm ?? "—"}</div></div>
       </div>
 
       <div className="disclaimer">{result.disclaimer} This is a statistical research prototype; it has not been clinically
@@ -103,8 +99,6 @@ export function Results() {
                   </td>
                 </tr>
               )}
-              <tr><th>Model</th><td className="mono">{result.model_version}</td></tr>
-              <tr><th>Algorithm</th><td>{result.model_algorithm ?? "—"}</td></tr>
               <tr><th>Calibration</th><td>{result.calibrated ? "calibrated" : "not calibrated"}</td></tr>
             </tbody>
           </table>
@@ -190,33 +184,8 @@ export function Results() {
         <p className="muted">No importance data was stored for this model.</p>
       )}
 
-      <h2>How reliable is this model?</h2>
-      <p className="muted">
-        Held-out test-set performance of <span className="mono">{result.model_version}</span> at the standard 0.5
-        threshold. Full comparison against alternative algorithms, confusion matrix and calibration:{" "}
-        <Link to="/validation">Validation &amp; model comparison</Link>.
-      </p>
-      <div className="grid metrics-grid">
-        {[
-          ["ROC-AUC", perf.test_roc_auc],
-          ["PR-AUC", perf.test_pr_auc],
-          ["Accuracy", perf.test_accuracy],
-          ["Precision", perf.test_precision],
-          ["Recall (sensitivity)", perf.test_recall_sensitivity],
-          ["Specificity", perf.test_specificity],
-          ["F1", perf.test_f1],
-          ["CV ROC-AUC (mean)", perf.cv_roc_auc_mean],
-        ].map(([label, v]) => (
-          <div className="card" key={label as string}>
-            <div className="k">{label}</div>
-            <div className="v">{fmt(v as number | null)}</div>
-          </div>
-        ))}
-      </div>
-
       <div className="form-actions">
         <Link to="/assessment" className="btn-link">Run another assessment</Link>
-        <Link to="/validation" className="btn-secondary">See how this model was validated</Link>
       </div>
     </>
   );

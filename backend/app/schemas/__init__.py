@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import BaseModel, Field, create_model, field_validator
+from pydantic import BaseModel, ConfigDict, Field, create_model, field_validator
 
 from backend.app.config import REPO_ROOT
 from ml.common.utilities import read_json
@@ -65,7 +65,7 @@ def _build_request_model(disease: str) -> type[BaseModel] | None:
                 )
     return create_model(  # type: ignore[call-overload]
         f"{disease.title().replace('_', '')}Features",
-        __config__=type("Cfg", (), {"extra": "forbid"}),
+        __config__=ConfigDict(extra="forbid"),
         __validators__=validators,
         **fields,
     )

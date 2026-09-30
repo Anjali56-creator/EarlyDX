@@ -39,9 +39,8 @@ export function About() {
         <li><strong>Deployment</strong> — the serialised pipeline, feature schema, metadata and registry entry are committed and served unchanged by the API.</li>
       </ol>
       <p className="muted">
-        All of this is visible in the app: <Link to="/validation">Validation &amp; model comparison</Link> shows the
-        candidate table, verdict and confusion matrix for every condition; <Link to="/models">Models</Link> and{" "}
-        <Link to="/datasets">Datasets</Link> show the registries the API reads from.
+        The registries the API reads from are visible in the app: <Link to="/models">Models</Link> and{" "}
+        <Link to="/datasets">Datasets</Link>.
       </p>
 
       <h2>Architecture</h2>

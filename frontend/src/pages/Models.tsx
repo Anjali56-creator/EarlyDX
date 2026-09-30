@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { api } from "../api/client";
 import { ApiErrorBox, Loading } from "../components/PageState";
 import type { EvaluationSummary, ModelEntry } from "../types";
@@ -97,8 +97,7 @@ export function Models() {
       </div>
       <p className="muted">
         Accuracy alone is misleading on imbalanced medical data — a model can score well by predicting the majority
-        class. Recall (missed cases) and PR-AUC are the metrics to weigh for screening. See{" "}
-        <Link to="/validation">Validation</Link> for the per-condition candidate comparison and confusion matrices.
+        class. Recall (missed cases) and PR-AUC are the metrics to weigh for screening.
       </p>
 
       <h2>Model details</h2>
@@ -138,10 +137,6 @@ export function Models() {
                       <div key={k}>{METRIC_LABELS[k] ?? k}: {v}</div>
                     ))}
                   </td>
-                </tr>
-                <tr>
-                  <th>More</th>
-                  <td><Link to="/validation">Candidate comparison, confusion matrix, calibration →</Link></td>
                 </tr>
               </tbody>
             </table>

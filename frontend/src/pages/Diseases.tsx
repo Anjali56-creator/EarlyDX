@@ -88,7 +88,6 @@ export function Diseases() {
                         ) : <p className="muted">—</p>}
                         <div className="condition-links">
                           <Link to="/assessment">Assess</Link>
-                          <Link to="/validation">Validation</Link>
                           <Link to={`/models#${m?.model_id ?? ""}`}>Model</Link>
                           <Link to="/datasets">Dataset</Link>
                         </div>

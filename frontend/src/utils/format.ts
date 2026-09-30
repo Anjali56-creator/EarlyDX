@@ -5,6 +5,7 @@
  * into a more readable label, without inventing any new information.
  * Acronym-like tokens (all uppercase, e.g. "BMI", "TSH") are left as-is. */
 export function humanizeLabel(key: string): string {
+  if (key === "Pregnancies") return "Number of Pregnancies";
   let s = key.replace(/[:_]/g, " ");
   s = s.replace(/([a-z0-9])([A-Z])/g, "$1 $2");
   s = s.replace(/\s+/g, " ").trim();

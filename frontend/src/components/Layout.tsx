@@ -15,7 +15,6 @@ const ICONS = {
   diseases: "M12 21s-7-4.5-7-10a7 7 0 0114 0c0 5.5-7 10-7 10zM12 8v6M9 11h6",
   models: "M4 7h16v4H4zM4 13h16v4H4zM8 9h.01M8 15h.01",
   datasets: "M12 3c4.4 0 8 1.3 8 3s-3.6 3-8 3-8-1.3-8-3 3.6-3 8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3",
-  validation: "M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z",
   about: "M12 22a10 10 0 100-20 10 10 0 000 20zM12 16v-4M12 8h.01",
 };
 
@@ -31,9 +30,7 @@ const navGroups: { heading: string; links: { to: string; label: string; icon: ke
   {
     heading: "Research",
     links: [
-      { to: "/validation", label: "Validation", icon: "validation" },
       { to: "/models", label: "Models", icon: "models" },
-      { to: "/datasets", label: "Datasets", icon: "datasets" },
       { to: "/diseases", label: "Conditions", icon: "diseases" },
     ],
   },
@@ -45,7 +42,6 @@ const PAGE_CONTEXT: Record<string, string> = {
   "/dashboard": "Overview",
   "/assessment": "Guided risk assessment",
   "/results": "Assessment result",
-  "/validation": "Model validation · comparative analysis",
   "/models": "Model registry",
   "/datasets": "Dataset registry",
   "/diseases": "Conditions in scope",
@@ -80,7 +76,6 @@ export function Layout() {
         <span className="header-spacer" />
         <nav className="header-links" aria-label="Primary">
           <NavLink to="/dashboard">Dashboard</NavLink>
-          <NavLink to="/validation">Validation</NavLink>
           <NavLink to="/about">About</NavLink>
         </nav>
         <Link to="/assessment" className="btn-link btn-sm">New Assessment</Link>
@@ -135,7 +130,6 @@ export function Layout() {
               <Link to="/dashboard">Dashboard</Link>
               <Link to="/assessment">New Assessment</Link>
               <Link to="/results">Results</Link>
-              <Link to="/validation">Validation</Link>
               <Link to="/models">Models</Link>
               <Link to="/datasets">Datasets</Link>
               <Link to="/diseases">Conditions</Link>
